@@ -108,6 +108,21 @@
   text-decoration: none;
 }
 
+/* Tippziel mindestens 44 px, ohne das Layout zu verändern: die Fläche wächst nur als unsichtbare Überlagerung. */
+.titel a,
+.fuss a {
+  position: relative;
+  display: inline-block;
+  min-width: 44px;
+}
+
+.titel a::after,
+.fuss a::after {
+  content: '';
+  position: absolute;
+  inset: -0.8rem -0.25rem;
+}
+
 .titel a:hover {
   text-decoration: underline;
 }

@@ -20,7 +20,7 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
    `document.write`. Fremdtext landet nur als Textknoten.
 7. **Startbudget 50 KB gzip hart** (HTML + CSS + JS + Startdaten, ohne Cover), Ziel unter 30 KB. Nur senken, nie anheben.
 8. **Keine Tests im Repo** (Daniel, 25.10.2026). Geprüft wird von außen (Prüfweg). `tools/wache.mjs` ist kein Test, sondern
-   ein Regelwächter am Quelltext (Punkte 1 bis 7).
+   ein Regelwächter am Quelltext (Punkte 1 bis 7); `tools/wache-probe.mjs` spielt ihm eingebaute Verstöße vor (Selbstprobe, prüft keine App).
 9. **Daten** stammen nur aus dem öffentlichen Repo `danielzaiser91/anime-kalender-de` (`public/data`, `data/kennungen.json`), nie von
    Hand und nie ins Git dieses Repos. Datenfehler dort beheben, nicht hier. Daten werden verdichtet (`tools/verdichten.mjs`) und nur
    bei neuem Stand als Pages-Artefakt veröffentlicht.
@@ -41,7 +41,7 @@ js/ui/dom.js          h()
 js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
-tools/                wache.mjs (Regelwächter), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
+tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
 .github/workflows/    daten.yml (stündlich), pr-pruefer.yml
 ```
 
@@ -58,15 +58,17 @@ Texte deutsch, Feldnamen englisch, Kommentare nur das Warum (1 bis 3 Zeilen).
 
 ## Datenweg
 
-`daten.yml` (stündlich und manuell): fragt die letzte Commit-SHA von `public/data` im Altrepo (ohne Token), vergleicht sie mit
+`daten.yml` (stündlich, manuell, bei Push auf main und in jedem Pull Request; im PR baut er nur, alle anderen Auslöser deployen
+bei neuem Stand oder neuem Code, also auch jeder Push auf main): fragt die letzte Commit-SHA von `public/data` im Altrepo (ohne Token), vergleicht sie mit
 `stand.json` der laufenden Veröffentlichung, holt bei Änderung per Sparse-Checkout `public/data` und `data/kennungen.json`,
 verdichtet (Schemaprüfung, bei Fehler kein Deploy), prüft Größen und veröffentlicht als Pages-Artefakt. Ein Keepalive-Schritt
 hält den Zeitplan gegen die 60-Tage-Abschaltung wach. Workflow-Dateien sind hier erlaubt (die Sammler-Sperre gilt nur im Altrepo).
 
 ## Änderungen
 
-Alles als Pull Request, nie direkt auf `main`. Der CI-Prüfer (`pr-pruefer.yml`) urteilt einmal je Kopf. Vor dem Push
-`node tools/wache.mjs` lokal.
+Alles als Pull Request, nie direkt auf `main`. Einzige Ausnahme (Daniel, F65, 25.10.2026): der Job „Zeitplan wachhalten“ macht
+nach 30 Tagen Stille einen Zeitstempel-Commit (`wachhalten.txt`) direkt auf `main`, weil GitHub Cron-Läufe nach 60 Tagen ohne Aktivität abschaltet.
+Der CI-Prüfer (`pr-pruefer.yml`) urteilt einmal je Kopf. Vor dem Push `node tools/wache.mjs` und `node tools/wache-probe.mjs` lokal.
 
 ## Prüfweg (von außen)
 

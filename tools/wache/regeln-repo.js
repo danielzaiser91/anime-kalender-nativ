@@ -19,13 +19,13 @@ export function pruefePackage(text) {
 }
 
 function hostVon(adresse) {
-  return adresse.replace(/^https?:\/\//, '').split(/[/?#"')\s]/)[0]
+  return adresse.replace(/^(https?:)?\/\//, '').split(/[/?#"')\s]/)[0]
 }
 
 export function pruefeAussenadressen(pfad, text) {
   if (!AUSGELIEFERT.test(pfad)) return []
   const adressen = [...text.matchAll(/(?:https?:)?\/\/[\w.-]+\.[a-z]{2,}[^\s"')]*/g)].map((m) => m[0])
-  const fremd = adressen.filter((a) => a.startsWith('http') && !ERLAUBTE_HOSTS.includes(hostVon(a).replace(/^www\./, '')))
-  const importe = /@import|url\(\s*['"]?https?:/.test(text) ? [`${pfad}: @import oder url(http) in CSS`] : []
+  const fremd = adressen.filter((a) => !ERLAUBTE_HOSTS.includes(hostVon(a).replace(/^www\./, '')))
+  const importe = /@import|url\(\s*['"]?(https?:)?\/\//.test(text) ? [`${pfad}: @import oder url(http, //) in CSS`] : []
   return [...fremd.map((a) => `${pfad}: Fremdadresse ${a}`), ...importe]
 }

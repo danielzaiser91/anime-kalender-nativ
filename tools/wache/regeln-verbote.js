@@ -19,7 +19,7 @@ export function pruefeVerbote(pfad, entschaerft) {
 }
 
 export function pruefeModulvariablen(pfad, entschaerft) {
-  return pfad === 'js/main.js' ? [] : treffer(pfad, entschaerft, MODULVARIABLE)
+  return treffer(pfad, entschaerft, MODULVARIABLE)
 }
 
 /** logik/ und daten/ kennen kein DOM; daten/ bekommt fetch von außen. */

@@ -51,6 +51,9 @@ jobs:
       - name: Regelwächter
         if: steps.vergleich.outputs.noetig == 'true'
         run: node tools/wache.mjs
+      - name: Wächter-Probe
+        if: steps.vergleich.outputs.noetig == 'true'
+        run: node tools/wache-probe.mjs
       - name: Daten des Altrepos holen
         if: steps.vergleich.outputs.noetig == 'true'
         uses: actions/checkout@v4
