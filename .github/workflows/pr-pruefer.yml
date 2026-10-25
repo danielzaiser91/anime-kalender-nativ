@@ -44,6 +44,8 @@ jobs:
       # Keine Tests im Repo: der Wächter prüft die Projektregeln aus CLAUDE.md am Quelltext.
       - name: Tests
         run: node tools/wache.mjs
+      - name: Wächter-Probe
+        run: node tools/wache-probe.mjs
 
   pruefer:
     name: Prüfer-Review

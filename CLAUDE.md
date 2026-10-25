@@ -20,7 +20,7 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
    `document.write`. Fremdtext landet nur als Textknoten.
 7. **Startbudget 50 KB gzip hart** (HTML + CSS + JS + Startdaten, ohne Cover), Ziel unter 30 KB. Nur senken, nie anheben.
 8. **Keine Tests im Repo** (Daniel, 25.10.2026). Geprüft wird von außen (Prüfweg). `tools/wache.mjs` ist kein Test, sondern
-   ein Regelwächter am Quelltext (Punkte 1 bis 7).
+   ein Regelwächter am Quelltext (Punkte 1 bis 7); `tools/wache-probe.mjs` spielt ihm eingebaute Verstöße vor (Selbstprobe, prüft keine App).
 9. **Daten** stammen nur aus dem öffentlichen Repo `danielzaiser91/anime-kalender-de` (`public/data`, `data/kennungen.json`), nie von
    Hand und nie ins Git dieses Repos. Datenfehler dort beheben, nicht hier. Daten werden verdichtet (`tools/verdichten.mjs`) und nur
    bei neuem Stand als Pages-Artefakt veröffentlicht.
@@ -40,9 +40,15 @@ js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwec
 js/ui/dom.js          h()
 js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
-tools/                wache.mjs (Regelwächter), verdichten.mjs (Datenschritt), mit Node-Bordmitteln
-.github/workflows/    daten.yml (stündlich), pr-pruefer.yml
+package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
+tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
+.github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
 ```
+
+## Stand und bekannte Abweichungen
+
+Durchstich: Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken, Link auf die Titelseite der Hauptseite). Gegenüber der
+Hauptseite fehlt noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Monat, Suche, Filter, Favoriten, Detail-Panel, Offline.
 
 ## Oberfläche
 
@@ -52,15 +58,17 @@ Texte deutsch, Feldnamen englisch, Kommentare nur das Warum (1 bis 3 Zeilen).
 
 ## Datenweg
 
-`daten.yml` (stündlich und manuell): fragt die letzte Commit-SHA von `public/data` im Altrepo (ohne Token), vergleicht sie mit
-`stand.json` der laufenden Veröffentlichung, holt bei Änderung per Sparse-Checkout `public/data` und `data/kennungen.json`,
-verdichtet (Schemaprüfung, bei Fehler kein Deploy), prüft Größen und veröffentlicht als Pages-Artefakt. Ein Keepalive-Schritt
-hält den Zeitplan gegen die 60-Tage-Abschaltung wach. Workflow-Dateien sind hier erlaubt (die Sammler-Sperre gilt nur im Altrepo).
+`daten.yml` startet stündlich über den Cloudflare-Wecker (Worker `newsletter` in anime-kalender-de, `worker/src/wecker.ts`) per
+`workflow_dispatch`, manuell, bei Push auf main und in jedem Pull Request (im PR nur Bau, sonst Deploy; Push auf main baut und
+deployt immer). Kein eigener GitHub-Zeitplan, weil GitHub ihn nach 60 Ruhetagen abschaltet und unpünktlich feuert (25.10.2026).
+Der Lauf fragt die letzte Commit-SHA von `public/data` im Altrepo (ohne Token), vergleicht sie mit
+`stand.json` der laufenden Veröffentlichung (bei gleichem Stand endet ein Dispatch ohne Bau, außer `erzwingen`), holt bei Änderung
+per Sparse-Checkout `public/data` und `data/kennungen.json`, verdichtet (Schemaprüfung, bei Fehler kein Deploy), prüft Größen und
+veröffentlicht als Pages-Artefakt. Workflow-Dateien sind hier erlaubt (die Sammler-Sperre gilt nur im Altrepo).
 
 ## Änderungen
 
-Alles als Pull Request, nie direkt auf `main`. Der CI-Prüfer (`pr-pruefer.yml`) urteilt einmal je Kopf. Vor dem Push
-`node tools/wache.mjs` lokal.
+Alles als Pull Request, nie direkt auf `main` (keine Ausnahme: der Datenlauf braucht keinen Wachhalte-Commit mehr). Der CI-Prüfer (`pr-pruefer.yml`) urteilt einmal je Kopf. Vor dem Push `node tools/wache.mjs` und `node tools/wache-probe.mjs` lokal.
 
 ## Prüfweg (von außen)
 
