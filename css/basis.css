@@ -1,0 +1,83 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--grund);
+  color: var(--text);
+  font: 1rem/1.45 var(--schrift-text);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--schrift-titel);
+  margin: 0;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--akzent-text);
+}
+
+:focus-visible {
+  outline: 3px solid var(--fokus);
+  outline-offset: 2px;
+}
+
+main {
+  max-width: var(--breite);
+  margin: 0 auto;
+  padding: 0 var(--abstand) 2rem;
+}
+
+main:focus {
+  outline: none;
+}
+
+.kopf {
+  max-width: var(--breite);
+  margin: 0 auto;
+  padding: var(--abstand);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  align-items: baseline;
+}
+
+.kopf p,
+.kopf h1 {
+  margin: 0;
+}
+
+.marke-name {
+  font: 700 1.25rem var(--schrift-titel);
+}
+
+.marke-name a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.marke-name span {
+  color: var(--akzent-text);
+}
+
+.kopf-text,
+.fuss {
+  color: var(--leise);
+  font-size: 0.875rem;
+}
+
+.meldung {
+  padding: 2rem 0;
+  color: var(--leise);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

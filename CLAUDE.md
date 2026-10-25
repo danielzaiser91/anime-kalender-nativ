@@ -40,9 +40,15 @@ js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwec
 js/ui/dom.js          h()
 js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
-tools/                wache.mjs (Regelwächter), verdichten.mjs (Datenschritt), mit Node-Bordmitteln
+package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
+tools/                wache.mjs (Regelwächter), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
 .github/workflows/    daten.yml (stündlich), pr-pruefer.yml
 ```
+
+## Stand und bekannte Abweichungen
+
+Durchstich: Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken, Link auf die Titelseite der Hauptseite). Gegenüber der
+Hauptseite fehlt noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Monat, Suche, Filter, Favoriten, Detail-Panel, Offline.
 
 ## Oberfläche
 
