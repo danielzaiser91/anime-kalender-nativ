@@ -1,0 +1,115 @@
+name: Daten und Veröffentlichung
+
+# Stündlich: fragt den Datenstand des Altrepos (öffentlich, ohne eigenes Token), baut nur bei neuem Stand
+# oder neuem Code, prüft Schema und Größen (bei Fehler kein Deploy) und veröffentlicht als Pages-Artefakt.
+# Im Pull Request läuft derselbe Bau ohne Deploy. Daten werden nie ins Git dieses Repos geschrieben.
+on:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: veroeffentlichen-${{ github.event_name == 'pull_request' && github.ref || 'pages' }}
+  cancel-in-progress: false
+
+env:
+  ALTREPO: danielzaiser91/anime-kalender-de
+  SEITE: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+
+jobs:
+  bauen:
+    name: Bauen
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      deploy: ${{ steps.vergleich.outputs.noetig == 'true' && github.event_name != 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Datenstand vergleichen
+        id: vergleich
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha=$(gh api "repos/$ALTREPO/commits?path=public/data&per_page=1" --jq '.[0].sha')
+          test -n "$sha"
+          laufend=$(curl -fsS "$SEITE/data/stand.json" | jq -r .quelle || echo keine)
+          echo "Altrepo $sha, veröffentlicht $laufend, Ereignis ${{ github.event_name }}"
+          noetig=true
+          if [ "${{ github.event_name }}" = schedule ] && [ "$sha" = "$laufend" ]; then noetig=false; fi
+          echo "noetig=$noetig" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+      - name: Regelwächter
+        if: steps.vergleich.outputs.noetig == 'true'
+        run: node tools/wache.mjs
+      - name: Daten des Altrepos holen
+        if: steps.vergleich.outputs.noetig == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.ALTREPO }}
+          path: altrepo
+          fetch-depth: 1
+          sparse-checkout: |
+            /public/data/
+            /data/kennungen.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Verdichten und Größen prüfen
+        if: steps.vergleich.outputs.noetig == 'true'
+        run: |
+          mkdir _site
+          cp -r index.html css js _site/
+          node tools/verdichten.mjs altrepo _site/data "${{ steps.vergleich.outputs.sha }}"
+          node tools/wache.mjs _site
+      - name: Artefakt hochladen
+        if: steps.vergleich.outputs.noetig == 'true' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  veroeffentlichen:
+    name: Pages
+    needs: bauen
+    if: needs.bauen.outputs.deploy == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - id: pages
+        uses: actions/deploy-pages@v4
+
+  wachhalten:
+    name: Zeitplan wachhalten
+    # GitHub schaltet geplante Läufe nach 60 Tagen ohne Repo-Aktivität ab: nach 30 Tagen Stille ein Zeitstempel-Commit.
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Zeitstempel bei Bedarf erneuern
+        run: |
+          alter=$(( $(date +%s) - $(git log -1 --format=%ct) ))
+          echo "Letzter Commit vor $((alter / 86400)) Tagen"
+          if [ "$alter" -lt 2592000 ]; then exit 0; fi
+          date -u +%Y-%m-%d > wachhalten.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add wachhalten.txt
+          git commit -m "chore: Zeitplan wachhalten"
+          git push
