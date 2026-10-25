@@ -42,7 +42,7 @@ js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
 tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
-.github/workflows/    daten.yml (stündlich), pr-pruefer.yml
+.github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
 ```
 
 ## Stand und bekannte Abweichungen
@@ -58,17 +58,17 @@ Texte deutsch, Feldnamen englisch, Kommentare nur das Warum (1 bis 3 Zeilen).
 
 ## Datenweg
 
-`daten.yml` (stündlich, manuell, bei Push auf main und in jedem Pull Request; im PR baut er nur, alle anderen Auslöser deployen
-bei neuem Stand oder neuem Code, also auch jeder Push auf main): fragt die letzte Commit-SHA von `public/data` im Altrepo (ohne Token), vergleicht sie mit
-`stand.json` der laufenden Veröffentlichung, holt bei Änderung per Sparse-Checkout `public/data` und `data/kennungen.json`,
-verdichtet (Schemaprüfung, bei Fehler kein Deploy), prüft Größen und veröffentlicht als Pages-Artefakt. Ein Keepalive-Schritt
-hält den Zeitplan gegen die 60-Tage-Abschaltung wach. Workflow-Dateien sind hier erlaubt (die Sammler-Sperre gilt nur im Altrepo).
+`daten.yml` startet stündlich über den Cloudflare-Wecker (Worker `newsletter` in anime-kalender-de, `worker/src/wecker.ts`) per
+`workflow_dispatch`, manuell, bei Push auf main und in jedem Pull Request (im PR nur Bau, sonst Deploy; Push auf main baut und
+deployt immer). Kein eigener GitHub-Zeitplan, weil GitHub ihn nach 60 Ruhetagen abschaltet und unpünktlich feuert (25.10.2026).
+Der Lauf fragt die letzte Commit-SHA von `public/data` im Altrepo (ohne Token), vergleicht sie mit
+`stand.json` der laufenden Veröffentlichung (bei gleichem Stand endet ein Dispatch ohne Bau, außer `erzwingen`), holt bei Änderung
+per Sparse-Checkout `public/data` und `data/kennungen.json`, verdichtet (Schemaprüfung, bei Fehler kein Deploy), prüft Größen und
+veröffentlicht als Pages-Artefakt. Workflow-Dateien sind hier erlaubt (die Sammler-Sperre gilt nur im Altrepo).
 
 ## Änderungen
 
-Alles als Pull Request, nie direkt auf `main`. Einzige Ausnahme (Daniel, F65, 25.10.2026): der Job „Zeitplan wachhalten“ macht
-nach 30 Tagen Stille einen Zeitstempel-Commit (`wachhalten.txt`) direkt auf `main`, weil GitHub Cron-Läufe nach 60 Tagen ohne Aktivität abschaltet.
-Der CI-Prüfer (`pr-pruefer.yml`) urteilt einmal je Kopf. Vor dem Push `node tools/wache.mjs` und `node tools/wache-probe.mjs` lokal.
+Alles als Pull Request, nie direkt auf `main` (keine Ausnahme: der Datenlauf braucht keinen Wachhalte-Commit mehr). Der CI-Prüfer (`pr-pruefer.yml`) urteilt einmal je Kopf. Vor dem Push `node tools/wache.mjs` und `node tools/wache-probe.mjs` lokal.
 
 ## Prüfweg (von außen)
 

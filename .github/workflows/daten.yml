@@ -1,15 +1,19 @@
 name: Daten und Veröffentlichung
 
-# Stündlich: fragt den Datenstand des Altrepos (öffentlich, ohne eigenes Token), baut nur bei neuem Stand
-# oder neuem Code, prüft Schema und Größen (bei Fehler kein Deploy) und veröffentlicht als Pages-Artefakt.
+# Stündlich per workflow_dispatch vom Cloudflare-Wecker des Hauptrepos (kein GitHub-Zeitplan: Abschaltung nach 60 Ruhetagen,
+# unpünktlich): fragt den Datenstand des Altrepos (öffentlich, ohne eigenes Token), baut dann nur bei neuem Stand,
+# prüft Schema und Größen (bei Fehler kein Deploy) und veröffentlicht als Pages-Artefakt. Push auf main baut immer.
 # Im Pull Request läuft derselbe Bau ohne Deploy. Daten werden nie ins Git dieses Repos geschrieben.
 on:
-  schedule:
-    - cron: '17 * * * *'
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      erzwingen:
+        description: 'Auch bei unverändertem Datenstand bauen und veröffentlichen'
+        type: boolean
+        default: false
 
 concurrency:
   group: veroeffentlichen-${{ github.event_name == 'pull_request' && github.ref || 'pages' }}
@@ -45,7 +49,7 @@ jobs:
           laufend=$(curl -fsS "$SEITE/data/stand.json" | jq -r .quelle || echo keine)
           echo "Altrepo $sha, veröffentlicht $laufend, Ereignis ${{ github.event_name }}"
           noetig=true
-          if [ "${{ github.event_name }}" = schedule ] && [ "$sha" = "$laufend" ]; then noetig=false; fi
+          if [ "${{ github.event_name }}" = workflow_dispatch ] && [ "${{ inputs.erzwingen }}" != true ] && [ "$sha" = "$laufend" ]; then noetig=false; fi
           echo "noetig=$noetig" >> "$GITHUB_OUTPUT"
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
       - name: Regelwächter
@@ -94,25 +98,3 @@ jobs:
     steps:
       - id: pages
         uses: actions/deploy-pages@v4
-
-  wachhalten:
-    name: Zeitplan wachhalten
-    # GitHub schaltet geplante Läufe nach 60 Tagen ohne Repo-Aktivität ab: nach 30 Tagen Stille ein Zeitstempel-Commit.
-    if: github.event_name == 'schedule'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Zeitstempel bei Bedarf erneuern
-        run: |
-          alter=$(( $(date +%s) - $(git log -1 --format=%ct) ))
-          echo "Letzter Commit vor $((alter / 86400)) Tagen"
-          if [ "$alter" -lt 2592000 ]; then exit 0; fi
-          date -u +%Y-%m-%d > wachhalten.txt
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add wachhalten.txt
-          git commit -m "chore: Zeitplan wachhalten"
-          git push
