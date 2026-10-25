@@ -4,6 +4,6 @@ export function h(tag, attribute = {}, ...kinder) {
   for (const [name, wert] of Object.entries(attribute)) {
     if (wert !== undefined && wert !== false) knoten.setAttribute(name, wert === true ? '' : wert)
   }
-  knoten.append(...kinder.flat().filter((kind) => kind !== undefined && kind !== false && kind !== ''))
+  knoten.append(...kinder.flat().filter((kind) => kind != null && kind !== false && kind !== ''))
   return knoten
 }
