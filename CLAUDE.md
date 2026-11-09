@@ -9,21 +9,24 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
    Webfonts, keine Bibliothek, kein Framework, kein Bundler. Einzige Außenaufrufe im Browser: Cover und Banner als `<img>` vom Bildserver (Hotlink, Entscheidung
    25.10.2026; Banner nur im Panel, nicht beim Start) und Links, die der Nutzer anklickt. Fetch nur auf eigene Dateien.
-   Einzige Ausnahme, nur im Workflow: Vor Messung und Veröffentlichung wird jede JS- und CSS-Datei in `_site` einzeln minifiziert
-   (esbuild mit fester Version über `npx`, `--minify`, kein Bündeln; Daniel, 09.11.2026). Der Quelltext im Repo bleibt lesbar.
+   Einzige Ausnahme, nur beim Bau (Workflow und `tools/bauen.sh`): Vor Messung und Veröffentlichung wird jede JS- und CSS-Datei in `_site` einzeln minifiziert
+   (esbuild mit fester Version über `npx`, `--minify`, kein Bündeln; Daniel, 09.11.2026: „vor live bringung und messung soll uglified
+   und minified werden“). Der Quelltext im Repo bleibt lesbar. npm prüft das Paket gegen die Prüfsumme der Registry; eine eigene
+   Prüfsumme gibt es nicht, deshalb nur eine feste Version und nie im Browser.
 2. **Schrift:** Text `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`; Überschriften
    `'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif` (Variante E der Hauptseite).
 3. **Umfang:** Modul höchstens 200 Zeilen, Funktion höchstens 40, höchstens 3 Parameter (sonst ein Objekt). Neues bekommt ein neues Modul
    statt ein volles zu füllen. Grenzen werden nie angehoben und nie umgangen (keine `;`-Ketten, keine zusammengezogenen Zeilen).
 4. **Schichten** `ui → zustand → logik → daten`: ein Modul importiert nur aus seiner Schicht oder aus Schichten weiter rechts, nie
    zurück. `logik/` und `daten/` kennen kein DOM. Seiten in `ui/seiten/` importieren einander nicht; Gemeinsames nach `ui/bausteine/`.
-   **Minimal und wiederverwendet** (Daniel, 09.11.2026): Daten holen und anzeigen, einfache Seitenlogik, keine Komplexität ohne Bedarf.
+   **Minimal und wiederverwendet** (Daniel, 09.11.2026: „möglichst so programmieren das code-schnipsel wiederverwendet werden können“): Daten holen und anzeigen, einfache Seitenlogik, keine Komplexität ohne Bedarf.
    Dieselbe Aufgabe (Formatieren, Liste, Knopf, Laden, Fehleranzeige) gibt es genau einmal in `ui/bausteine/` bzw. `logik/`; vor jedem
    neuen Baustein wird nach einem vorhandenen gesucht. Eine zweite eigene Fassung ist ein Befund im Review.
 5. **Zustand** nur im Store (`js/zustand/store.js`). Keine veränderlichen Modul-Variablen sonst, keine Seiteneffekte beim Import.
 6. **DOM** nur über `h()` (`js/ui/dom.js`). Kein `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval`, `new Function`,
    `document.write`. Fremdtext landet nur als Textknoten.
-7. **Größe: schlank ist das Ziel, die Grenze nur der Notanker** (Daniel, 09.11.2026). Start = was vor dem ersten Bild geladen wird
+7. **Größe: schlank ist das Ziel, die Grenze nur der Notanker** (Daniel, 09.11.2026: „das ziel soll schlanker code sein“, „die regeln sollen
+   nicht künstlich umgangen werden“). Start = was vor dem ersten Bild geladen wird
    (HTML + CSS + JS + Startdaten, ohne Cover): Ziel unter 30 KB, hart 50 KB gzip. Nachgeladener Code (`import()`) je Baustein: Ziel
    unter 12 KB, hart 20 KB gzip (`tools/wache/groesse.js`). Gemessen wird immer die minifizierte, gzip-komprimierte Fassung;
    Kommentare zählen nie und werden nie gekürzt, um Platz zu sparen. Dazu zählt die **Gesamtsumme** (Start + alle Bausteine): Wächter-Ausgabe
@@ -54,7 +57,7 @@ js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
-tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel
+tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel (außer esbuild in `bauen.sh`, Punkt 1)
 .github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
 ```
 
@@ -63,7 +66,7 @@ tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstp
 Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken) und Panel je Titel (`#/woche/<Woche>/t/<Kennung>`, teilbar):
 Antwort-Kasten, Wege nach Zugang mit Folgenbereichen und Lücken, Termine, Eckdaten. Die Panel-Logik ist aus der Hauptseite portiert und
 gegen deren Funktionen an allen Titeln gemessen. Nicht im Panel: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine,
-Disc-Bände, ausgebliebene Folgen und "Takt unklar", Prime-Kanal-Bestand, Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
+Disc-Bände, ausgebliebene Folgen und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
 Handlung, Besetzung, Folgentitel, Disc-Ausgaben, Reihen, Merken. Gegenüber der Hauptseite fehlt noch: Bündeln gleicher Titel,
 Zweitanbieter-Zeilen, Monat, Suche, Filter, Favoriten, Offline.
 
