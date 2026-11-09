@@ -1,18 +1,18 @@
 // Datenschritt: node tools/verdichten.mjs <Altrepo-Ordner> <Ausgabe-Ordner> [Quell-SHA]
-// Liest public/data des Altrepos, prüft es und schreibt <Ausgabe>/stand.json und <Ausgabe>/woche/*.json.
+// Liest public/data des Altrepos, prüft es und schreibt <Ausgabe>/stand.json, <Ausgabe>/woche/*.json und <Ausgabe>/titel/*.json.
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { ladeQuelle } from './verdichten/quelle.js'
+import { baueTitelGruppen } from './verdichten/titel.js'
 import { baueTitelKarte, baueWochen, wochenBereich, SCHEMA } from './verdichten/wochen.js'
 
 function schreibeJson(pfad, daten) {
   writeFileSync(pfad, JSON.stringify(daten))
 }
 
-function schreibe(ausgabe, wochen, stand) {
-  mkdirSync(join(ausgabe, 'woche'), { recursive: true })
-  for (const [schluessel, woche] of wochen) schreibeJson(join(ausgabe, 'woche', `${schluessel}.json`), woche)
-  schreibeJson(join(ausgabe, 'stand.json'), stand)
+function schreibeGruppe(ausgabe, unterordner, dateien) {
+  mkdirSync(join(ausgabe, unterordner), { recursive: true })
+  for (const [name, inhalt] of dateien) schreibeJson(join(ausgabe, unterordner, `${name}.json`), inhalt)
 }
 
 function main([altrepo, ausgabe, sha = null]) {
@@ -20,9 +20,12 @@ function main([altrepo, ausgabe, sha = null]) {
   const quelle = ladeQuelle(altrepo)
   const bereich = wochenBereich(quelle.events, Date.parse(quelle.meta.generatedAt))
   const wochen = baueWochen(quelle.events, baueTitelKarte(quelle), bereich)
+  const gruppen = baueTitelGruppen(quelle)
   const stand = { schema: SCHEMA, erzeugt: quelle.meta.generatedAt, quelle: sha, ...bereich }
-  schreibe(ausgabe, wochen, stand)
-  console.log(`verdichtet: ${wochen.size} Wochen ${bereich.von} bis ${bereich.bis}, ${quelle.events.length} Termine, Stand ${stand.erzeugt}`)
+  schreibeGruppe(ausgabe, 'woche', wochen)
+  schreibeGruppe(ausgabe, 'titel', gruppen)
+  schreibeJson(join(ausgabe, 'stand.json'), stand)
+  console.log(`verdichtet: ${wochen.size} Wochen ${bereich.von} bis ${bereich.bis}, ${quelle.events.length} Termine, ${gruppen.size} Titelgruppen, Stand ${stand.erzeugt}`)
 }
 
 main(process.argv.slice(2))

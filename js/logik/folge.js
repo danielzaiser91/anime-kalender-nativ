@@ -10,6 +10,8 @@ const ANBIETER = {
   wow: 'WOW',
   joyn: 'Joyn',
   rtlplus: 'RTL+',
+  youtube: 'YouTube',
+  unbekannt: 'Unbekannt',
   kino: 'Kino',
   disc: 'DVD / Blu-ray',
   tv: 'TV',

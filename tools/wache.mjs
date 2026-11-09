@@ -39,7 +39,7 @@ function main([ausgabe, woche = wocheVon(heuteInBerlin(Date.now()))]) {
   if (ausgabe) {
     const messung = messeStart(ausgabe, woche)
     verstoesse.push(...pruefeBudget(messung))
-    budget = `, Start ${(messung.gesamt / 1024).toFixed(1)} KB gzip (Code ${(messung.code / 1024).toFixed(1)}, Daten ${(messung.daten / 1024).toFixed(1)})`
+    budget = `, Start ${(messung.gesamt / 1024).toFixed(1)} KB gzip (Code ${(messung.code / 1024).toFixed(1)}, Daten ${(messung.daten / 1024).toFixed(1)}), Panel lazy JS ${(messung.lazyJs / 1024).toFixed(1)} KB, CSS ${(messung.lazyCss / 1024).toFixed(1)} KB`
   }
   verstoesse.forEach((v) => console.log(`VERSTOSS ${v}`))
   console.log(`Wächter: ${quelltexte.length} Dateien, ${verstoesse.length} Verstöße${budget}`)

@@ -4,6 +4,8 @@ import { join } from 'node:path'
 
 const MIN_TERMINE = 1000
 const MIN_TITEL = 300
+const MIN_TITEL_VOLL = 1500
+const MIN_RELEASES = 300
 const MIN_KENNUNGEN = 1000
 const DATUM = /^\d{4}-\d{2}-\d{2}$/
 
@@ -17,7 +19,9 @@ function pruefeTermin(termin, i) {
   if (typeof termin.name !== 'string' || !termin.name) throw fehler('name fehlt')
 }
 
-function pruefeMengen({ events, titel, kennungen, meta }) {
+function pruefeMengen({ events, titel, titelVoll, releases, kennungen, meta }) {
+  if (!Array.isArray(titelVoll) || titelVoll.length < MIN_TITEL_VOLL) throw new Error(`titles.json: ${titelVoll?.length} Titel, erwartet mindestens ${MIN_TITEL_VOLL}`)
+  if (!Array.isArray(releases) || releases.length < MIN_RELEASES) throw new Error(`releases.json: ${releases?.length} Releases, erwartet mindestens ${MIN_RELEASES}`)
   if (!Array.isArray(events) || events.length < MIN_TERMINE) throw new Error(`events.json: ${events?.length} Termine, erwartet mindestens ${MIN_TERMINE}`)
   if (!Array.isArray(titel) || titel.length < MIN_TITEL) throw new Error(`titles-core.json: ${titel?.length} Titel, erwartet mindestens ${MIN_TITEL}`)
   if (!Array.isArray(kennungen.titel) || kennungen.titel.length < MIN_KENNUNGEN) throw new Error('kennungen.json: zu wenige Zeilen')
@@ -28,6 +32,8 @@ export function ladeQuelle(wurzel) {
   const quelle = {
     events: lies(wurzel, 'public/data/events.json'),
     titel: lies(wurzel, 'public/data/titles-core.json'),
+    titelVoll: lies(wurzel, 'public/data/titles.json'),
+    releases: lies(wurzel, 'public/data/releases.json'),
     kennungen: lies(wurzel, 'data/kennungen.json'),
     meta: lies(wurzel, 'public/data/meta.json'),
   }

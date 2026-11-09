@@ -19,6 +19,7 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 6. **DOM** nur über `h()` (`js/ui/dom.js`). Kein `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval`, `new Function`,
    `document.write`. Fremdtext landet nur als Textknoten.
 7. **Startbudget 50 KB gzip hart** (HTML + CSS + JS + Startdaten, ohne Cover), Ziel unter 30 KB. Nur senken, nie anheben.
+   Was erst per `import()` kommt (das Panel), zählt nicht zum Start, sondern zum **Lazy-JS-Budget 20 KB gzip** (`tools/wache/groesse.js`, gemessen je Datei).
 8. **Keine Tests im Repo** (Daniel, 25.10.2026). Geprüft wird von außen (Prüfweg). `tools/wache.mjs` ist kein Test, sondern
    ein Regelwächter am Quelltext (Punkte 1 bis 7); `tools/wache-probe.mjs` spielt ihm eingebaute Verstöße vor (Selbstprobe, prüft keine App).
 9. **Daten** stammen nur aus dem öffentlichen Repo `danielzaiser91/anime-kalender-de` (`public/data`, `data/kennungen.json`), nie von
@@ -32,14 +33,15 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 
 ```
 index.html            Hülle mit Lade-Hinweis und noscript
-css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css
+css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css
 js/main.js            Verdrahtung, höchstens 60 Zeilen
-js/daten/             fetch + Cache; kennt nur Adressen
-js/logik/             reine Funktionen (Zeit, Woche gruppieren)
+js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>)
+js/logik/             reine Funktionen (Zeit, Woche gruppieren; Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
 js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel)
 js/ui/dom.js          h()
 js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
+js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
 tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
 .github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
@@ -47,8 +49,12 @@ tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstp
 
 ## Stand und bekannte Abweichungen
 
-Durchstich: Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken, Link auf die Titelseite der Hauptseite). Gegenüber der
-Hauptseite fehlt noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Monat, Suche, Filter, Favoriten, Detail-Panel, Offline.
+Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken) und Panel je Titel (`#/woche/<Woche>/t/<Kennung>`, teilbar):
+Antwort-Kasten, Wege nach Zugang mit Folgenbereichen und Lücken, Termine, Eckdaten. Die Panel-Logik ist aus der Hauptseite portiert und
+gegen deren Funktionen an allen Titeln gemessen. Nicht im Panel: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine,
+Disc-Bände, ausgebliebene Folgen und "Takt unklar", Prime-Kanal-Bestand, Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
+Handlung, Besetzung, Folgentitel, Disc-Ausgaben, Reihen, Merken. Gegenüber der Hauptseite fehlt noch: Bündeln gleicher Titel,
+Zweitanbieter-Zeilen, Monat, Suche, Filter, Favoriten, Offline.
 
 ## Oberfläche
 
