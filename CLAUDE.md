@@ -9,6 +9,8 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
    Webfonts, keine Bibliothek, kein Framework, kein Bundler. Einzige Außenaufrufe im Browser: Cover und Banner als `<img>` vom Bildserver (Hotlink, Entscheidung
    25.10.2026; Banner nur im Panel, nicht beim Start) und Links, die der Nutzer anklickt. Fetch nur auf eigene Dateien.
+   Einzige Ausnahme, nur im Workflow: Vor Messung und Veröffentlichung wird jede JS- und CSS-Datei in `_site` einzeln minifiziert
+   (esbuild mit fester Version über `npx`, `--minify`, kein Bündeln; Daniel, 09.11.2026). Der Quelltext im Repo bleibt lesbar.
 2. **Schrift:** Text `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`; Überschriften
    `'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif` (Variante E der Hauptseite).
 3. **Umfang:** Modul höchstens 200 Zeilen, Funktion höchstens 40, höchstens 3 Parameter (sonst ein Objekt). Neues bekommt ein neues Modul
@@ -23,7 +25,8 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
    `document.write`. Fremdtext landet nur als Textknoten.
 7. **Größe: schlank ist das Ziel, die Grenze nur der Notanker** (Daniel, 09.11.2026). Start = was vor dem ersten Bild geladen wird
    (HTML + CSS + JS + Startdaten, ohne Cover): Ziel unter 30 KB, hart 50 KB gzip. Nachgeladener Code (`import()`) je Baustein: Ziel
-   unter 12 KB, hart 20 KB gzip (`tools/wache/groesse.js`). Dazu zählt die **Gesamtsumme** (Start + alle Bausteine): Wächter-Ausgabe
+   unter 12 KB, hart 20 KB gzip (`tools/wache/groesse.js`). Gemessen wird immer die minifizierte, gzip-komprimierte Fassung;
+   Kommentare zählen nie und werden nie gekürzt, um Platz zu sparen. Dazu zählt die **Gesamtsumme** (Start + alle Bausteine): Wächter-Ausgabe
    und jeder PR nennen sie mit Vorher/Nachher, jeder Zuwachs braucht eine Funktion, die ihn trägt. Grenzen nur senken, nie anheben.
    Nachgeladen wird nur, was der Start wirklich nicht braucht — nie, um eine Grenze zu umgehen (kein Abspalten, weil ein Topf voll
    ist). Liegt eine Zahl über ihrem Ziel, wird erst gekürzt (wiederverwenden, vereinfachen), dann aufgeteilt; der PR nennt, was
