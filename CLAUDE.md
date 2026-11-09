@@ -2,7 +2,7 @@
 
 Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben Daten (Animation mit deutscher Synchronfassung), aber
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
-bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Durchstich Wochenansicht.
+bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel, Favoriten, Gesehen, ICS-Export.
 
 ## Harte Grenzen
 
@@ -47,13 +47,14 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 
 ```
 index.html            Hülle mit Lade-Hinweis und noscript
-css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css
+css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css
 js/main.js            Verdrahtung, höchstens 60 Zeilen
-js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>)
-js/logik/             reine Funktionen (Zeit, Woche gruppieren; Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
-js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel)
+js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>); speicher.js (localStorage von außen übergeben)
+js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabelle für beide Ansichten), Merken, ICS; Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
+js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel), merk.js (Favoriten, Gesehen, Wahlen ändern und speichern)
 js/ui/dom.js          h()
-js/ui/bausteine/      kleine Teile (Kachel, Kopf)
+js/ui/zeichnen.js     zeichnet die Ansicht (Monat lazy), hält den Fokus über das Neuzeichnen; ui/aktionen.js: Klicks (data-aktion) und Datum-Sprung
+js/ui/bausteine/      kleine Teile (Kachel, Leiste, Zeitkopf, Schalter, Seitenrahmen)
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
@@ -67,8 +68,15 @@ Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken) und Pan
 Antwort-Kasten, Wege nach Zugang mit Folgenbereichen und Lücken, Termine, Eckdaten. Die Panel-Logik ist aus der Hauptseite portiert und
 gegen deren Funktionen an allen Titeln gemessen. Nicht im Panel: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine,
 Disc-Bände, ausgebliebene Folgen und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
-Handlung, Besetzung, Folgentitel, Disc-Ausgaben, Reihen, Merken. Gegenüber der Hauptseite fehlt noch: Bündeln gleicher Titel,
-Zweitanbieter-Zeilen, Monat, Suche, Filter, Favoriten, Offline.
+Handlung, Besetzung, Folgentitel, Disc-Ausgaben, Reihen, Merken.
+
+Schritt 3: Monatsansicht (`#/monat/<JJJJ-MM>`, Raster Montag bis Sonntag, schmal eine Liste der Tage mit Terminen; gleiche Termine wie die Woche,
+Panel darüber), Datum-Sprung (`<input type="date">` in der Leiste, springt in der gerade gezeigten Ansicht), Favoriten (je Titel) und
+"Gesehen bis Folge n" (je Folge, Stand je Titel), Einstellungen (nur "Ecchi-Titel zeigen", Vorgabe aus wie auf der Hauptseite; Hell/Dunkel folgt dem System),
+ICS-Export der Favoriten (Termine ab heute, Berliner Zeit als UTC-Stempel plus `X-WR-TIMEZONE` wie die Hauptseite). Speicher (localStorage, Schlüssel wie
+auf der Hauptseite): `favorites` (Liste Kennungen), `gesehenBis` (Kennung → Folge), `ecchiZeigen` ("1"), dazu `nurFavoriten` ("1"). Nachgeladen werden
+`ui/seiten/monat.js`, `ui/einstellungen/` und `ui/ics/`; der Wächter misst jeden `import()`-Einstieg als eigenen Baustein. Gegenüber der Hauptseite fehlt
+noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Suche, weitere Filter, Offline; Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
 
 ## Oberfläche
 
@@ -97,6 +105,6 @@ Screenshots (375 und 1200 px, hell und dunkel), Konsole ohne Fehler, Start-KB (g
 Titel und Zeiten derselben Woche). Nach dem Deploy zusätzlich gegen die echte Pages-Adresse.
 
 Die Bauausgabe entsteht lokal wie im Workflow mit `sh tools/bauen.sh <Altrepo-Ordner> <Ausgabeordner>` (kopieren, verdichten, minifizieren,
-messen); Bauer und Prüfer lesen so dieselbe Zahl. Der PR-Bericht nennt Start, Panel-JS und Gesamt (Start + alles Nachgeladene) minifiziert
+messen); Bauer und Prüfer lesen so dieselbe Zahl. Der PR-Bericht nennt Start, je Baustein (Panel, Monat, Einstellungen, ICS) und Gesamt (Start + alles Nachgeladene) minifiziert
 und gzip, jeweils Vorher/Nachher mit Datenstand; der Wächter markiert jede Zahl über ihrem Ziel mit „über Ziel“ (kein Fehler). Bei einer
 Umbau-Änderung ohne Verhaltensänderung gehören Bilder vorher/nachher (byte-gleich) und die Konsole ohne Fehler dazu.

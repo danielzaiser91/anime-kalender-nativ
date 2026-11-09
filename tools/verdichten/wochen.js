@@ -15,9 +15,13 @@ export function kuerzeTermin(termin) {
 // TMDB liefert Bilder in festen Breiten; die Kachel ist 56 px breit, 185 genügt auch für 3-fache Dichte.
 export const kleinesCover = (url) => (typeof url === 'string' && url.startsWith('https://') ? url.replace('/t/p/w500/', '/t/p/w185/') : null)
 
-export function baueTitelKarte({ titel, kennungen }) {
+/** Ecchi (Genre) wie auf der Hauptseite: die Oberfläche blendet solche Titel aus, bis der Nutzer sie zeigt. */
+const istEcchi = (t) => t.genres?.includes('Ecchi') === true
+
+export function baueTitelKarte({ titel, titelVoll, kennungen }) {
   const ak = new Map(kennungen.titel.map((z) => [z[1], z[3] ?? z[0]]))
-  return new Map(titel.map((t) => [t.id, { cover: kleinesCover(t.coverImage), ak: ak.get(t.id) ?? null }]))
+  const ecchi = new Set(titelVoll.filter(istEcchi).map((t) => t.id))
+  return new Map(titel.map((t) => [t.id, { cover: kleinesCover(t.coverImage), ak: ak.get(t.id) ?? null, ...(ecchi.has(t.id) && { ecchi: 1 }) }]))
 }
 
 function titelDerWoche(termine, karte) {
