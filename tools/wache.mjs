@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { heuteInBerlin, wocheVon } from '../js/logik/zeit.js'
 import { entschaerfe } from './wache/entschaerfen.js'
-import { BUDGET_BYTES, LAZY_JS_BYTES, messeStart, pruefeBudget } from './wache/groesse.js'
+import { groessenText, messeStart, pruefeBudget } from './wache/groesse.js'
 import { istQuelltext, sammleDateien } from './wache/quelltext.js'
 import { pruefeDateiUmfang, pruefeFunktionen } from './wache/regeln-umfang.js'
 import { pruefeAussenadressen, pruefeDateiNamen, pruefePackage } from './wache/regeln-repo.js'
@@ -39,7 +39,7 @@ function main([ausgabe, woche = wocheVon(heuteInBerlin(Date.now()))]) {
   if (ausgabe) {
     const messung = messeStart(ausgabe, woche)
     verstoesse.push(...pruefeBudget(messung))
-    budget = `, Start ${(messung.gesamt / 1024).toFixed(1)} von ${BUDGET_BYTES / 1024} KB gzip (Code ${(messung.code / 1024).toFixed(1)}, Daten ${(messung.daten / 1024).toFixed(1)}), Panel lazy JS ${(messung.lazyJs / 1024).toFixed(1)} von ${LAZY_JS_BYTES / 1024} KB, CSS ${(messung.lazyCss / 1024).toFixed(1)} KB`
+    budget = `, ${groessenText(messung)}`
   }
   verstoesse.forEach((v) => console.log(`VERSTOSS ${v}`))
   console.log(`Wächter: ${quelltexte.length} Dateien, ${verstoesse.length} Verstöße${budget}`)

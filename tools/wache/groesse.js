@@ -6,6 +6,9 @@ import { gzipSync } from 'node:zlib'
 
 export const BUDGET_BYTES = 50 * 1024
 export const LAZY_JS_BYTES = 20 * 1024
+// Ziele sind keine Fehler: eine Zahl darüber wird markiert, bis gekürzt ist.
+export const ZIEL_START_BYTES = 30 * 1024
+export const ZIEL_LAZY_JS_BYTES = 12 * 1024
 
 const gz = (pfad) => gzipSync(readFileSync(pfad), { level: 9 }).length
 const summe = (liste) => liste.reduce((s, p) => s + gz(p), 0)
@@ -46,6 +49,16 @@ export function messeStart(ausgabe, woche) {
   const lazyJs = sammle(join(ausgabe, 'js'), '.js').filter((p) => !start.includes(p))
   const lazyCss = sammle(join(ausgabe, 'css'), '.css').filter((p) => !startCss(ausgabe).includes(p))
   return { code: summe(code), daten: summe(daten), gesamt: summe(code) + summe(daten), lazyJs: summe(lazyJs), lazyCss: summe(lazyCss) }
+}
+
+const kb = (bytes) => (bytes / 1024).toFixed(1)
+const zahl = (bytes, grenze, ziel) => `${kb(bytes)} von ${grenze / 1024} KB (Ziel ${ziel / 1024})${bytes > ziel ? ' über Ziel' : ''}`
+
+/** Die Größenzeile des Wächters: Start, Panel-JS, Gesamtsumme (Start + alles Nachgeladene) mit Marke "über Ziel". */
+export function groessenText(m) {
+  const gesamt = m.gesamt + m.lazyJs + m.lazyCss
+  const ziel = ZIEL_START_BYTES + ZIEL_LAZY_JS_BYTES
+  return `Start ${zahl(m.gesamt, BUDGET_BYTES, ZIEL_START_BYTES)} gzip (Code ${kb(m.code)}, Daten ${kb(m.daten)}), Panel lazy JS ${zahl(m.lazyJs, LAZY_JS_BYTES, ZIEL_LAZY_JS_BYTES)}, CSS ${kb(m.lazyCss)} KB, Gesamt ${kb(gesamt)} KB${gesamt > ziel ? ' über Ziel' : ''}`
 }
 
 export function pruefeBudget(messung) {

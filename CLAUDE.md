@@ -54,7 +54,7 @@ js/ui/bausteine/      kleine Teile (Kachel, Kopf)
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
-tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), je mit Unterordner; nur Node-Bordmittel
+tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel
 .github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
 ```
 
@@ -92,3 +92,8 @@ Alles als Pull Request, nie direkt auf `main` (keine Ausnahme: der Datenlauf bra
 Playwright-Skript außerhalb des Repos. Ohne Server: `page.route` liefert die Bauausgabe unter einer Scheinadresse aus. Geprüft werden
 Screenshots (375 und 1200 px, hell und dunkel), Konsole ohne Fehler, Start-KB (gzip), Stichprobe gegen anime-kalender.de (gleiche
 Titel und Zeiten derselben Woche). Nach dem Deploy zusätzlich gegen die echte Pages-Adresse.
+
+Die Bauausgabe entsteht lokal wie im Workflow mit `sh tools/bauen.sh <Altrepo-Ordner> <Ausgabeordner>` (kopieren, verdichten, minifizieren,
+messen); Bauer und Prüfer lesen so dieselbe Zahl. Der PR-Bericht nennt Start, Panel-JS und Gesamt (Start + alles Nachgeladene) minifiziert
+und gzip, jeweils Vorher/Nachher mit Datenstand; der Wächter markiert jede Zahl über ihrem Ziel mit „über Ziel“ (kein Fehler). Bei einer
+Umbau-Änderung ohne Verhaltensänderung gehören Bilder vorher/nachher (byte-gleich) und die Konsole ohne Fehler dazu.
