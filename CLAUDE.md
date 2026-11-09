@@ -7,8 +7,8 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 ## Harte Grenzen
 
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
-   Webfonts, keine Bibliothek, kein Framework, kein Bundler. Einzige Außenaufrufe im Browser: Cover als `<img>` (Hotlink, Entscheidung
-   25.10.2026) und das Banner im Panel als `<img>` (gleiche Art, gleicher Anbieter; Zustimmung von Daniel offen, PR 2) und Links, die der Nutzer anklickt. Fetch nur auf eigene Dateien.
+   Webfonts, keine Bibliothek, kein Framework, kein Bundler. Einzige Außenaufrufe im Browser: Cover und Banner als `<img>` vom Bildserver (Hotlink, Entscheidung
+   25.10.2026; Banner nur im Panel, nicht beim Start) und Links, die der Nutzer anklickt. Fetch nur auf eigene Dateien.
 2. **Schrift:** Text `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`; Überschriften
    `'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif` (Variante E der Hauptseite).
 3. **Umfang:** Modul höchstens 200 Zeilen, Funktion höchstens 40, höchstens 3 Parameter (sonst ein Objekt). Neues bekommt ein neues Modul
@@ -18,8 +18,9 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 5. **Zustand** nur im Store (`js/zustand/store.js`). Keine veränderlichen Modul-Variablen sonst, keine Seiteneffekte beim Import.
 6. **DOM** nur über `h()` (`js/ui/dom.js`). Kein `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval`, `new Function`,
    `document.write`. Fremdtext landet nur als Textknoten.
-7. **Startbudget 50 KB gzip hart** (HTML + CSS + JS + Startdaten, ohne Cover), Ziel unter 30 KB. Nur senken, nie anheben.
-   Was erst per `import()` kommt (das Panel), zählt nicht zum Start, sondern zum **Lazy-JS-Budget 20 KB gzip** (`tools/wache/groesse.js`, gemessen je Datei).
+7. **Start = was vor dem ersten Bild geladen wird** (HTML + CSS + JS + Startdaten, ohne Cover): Ziel unter 30 KB, hart 50 KB gzip; nur
+   senken, nie anheben. Nachgeladener Code (per `import()`, bisher nur das Panel) hat eine eigene Grenze von 20 KB gzip je Baustein
+   (`tools/wache/groesse.js`, Summe der Lazy-Dateien des Bausteins). Die Wächter-Ausgabe nennt beide Zahlen mit ihrer Grenze.
 8. **Keine Tests im Repo** (Daniel, 25.10.2026). Geprüft wird von außen (Prüfweg). `tools/wache.mjs` ist kein Test, sondern
    ein Regelwächter am Quelltext (Punkte 1 bis 7); `tools/wache-probe.mjs` spielt ihm eingebaute Verstöße vor (Selbstprobe, prüft keine App).
 9. **Daten** stammen nur aus dem öffentlichen Repo `danielzaiser91/anime-kalender-de` (`public/data`, `data/kennungen.json`), nie von
