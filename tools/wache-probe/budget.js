@@ -31,4 +31,6 @@ export const FAELLE_BUDGET = [
   ['Start ein Byte über Budget', () => pruefeBudget({ gesamt: 51201, lazyJs: 1 }).length, 1],
   ['Panel per import() zählt als Lazy', () => (lazyBytes("const p = () => import('./panel.js')") > 0 ? 0 : 1), 0],
   ['Panel statisch importiert zählt zum Start', () => (lazyBytes("import { z1 } from './panel.js'") === 0 ? 0 : 1), 0],
+  ['Minifizierter statischer Import zählt zum Start', () => (lazyBytes('const a=1;import{z1}from"./panel.js";') === 0 ? 0 : 1), 0],
+  ['Minifizierter import() zählt als Lazy', () => (lazyBytes('const p=()=>import("./panel.js");') > 0 ? 0 : 1), 0],
 ]

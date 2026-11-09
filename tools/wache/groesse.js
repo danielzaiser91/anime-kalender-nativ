@@ -26,7 +26,7 @@ function startModule(einstieg) {
     const pfad = offen.pop()
     if (gesehen.has(pfad)) continue
     gesehen.add(pfad)
-    const importe = [...readFileSync(pfad, 'utf8').matchAll(/^\s*import\b[^'"]*['"](\.[^'"]+)['"]/gm)]
+    const importe = [...readFileSync(pfad, 'utf8').matchAll(/(?:^|[;}\s])import\s*(?:[^'"()]*from)?\s*['"](\.[^'"]+)['"]/g)]
     offen.push(...importe.map((m) => join(dirname(pfad), m[1])))
   }
   return [...gesehen]
