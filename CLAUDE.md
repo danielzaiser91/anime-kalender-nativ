@@ -15,12 +15,19 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
    statt ein volles zu füllen. Grenzen werden nie angehoben und nie umgangen (keine `;`-Ketten, keine zusammengezogenen Zeilen).
 4. **Schichten** `ui → zustand → logik → daten`: ein Modul importiert nur aus seiner Schicht oder aus Schichten weiter rechts, nie
    zurück. `logik/` und `daten/` kennen kein DOM. Seiten in `ui/seiten/` importieren einander nicht; Gemeinsames nach `ui/bausteine/`.
+   **Minimal und wiederverwendet** (Daniel, 09.11.2026): Daten holen und anzeigen, einfache Seitenlogik, keine Komplexität ohne Bedarf.
+   Dieselbe Aufgabe (Formatieren, Liste, Knopf, Laden, Fehleranzeige) gibt es genau einmal in `ui/bausteine/` bzw. `logik/`; vor jedem
+   neuen Baustein wird nach einem vorhandenen gesucht. Eine zweite eigene Fassung ist ein Befund im Review.
 5. **Zustand** nur im Store (`js/zustand/store.js`). Keine veränderlichen Modul-Variablen sonst, keine Seiteneffekte beim Import.
 6. **DOM** nur über `h()` (`js/ui/dom.js`). Kein `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `eval`, `new Function`,
    `document.write`. Fremdtext landet nur als Textknoten.
-7. **Start = was vor dem ersten Bild geladen wird** (HTML + CSS + JS + Startdaten, ohne Cover): Ziel unter 30 KB, hart 50 KB gzip; nur
-   senken, nie anheben. Nachgeladener Code (per `import()`, bisher nur das Panel) hat eine eigene Grenze von 20 KB gzip je Baustein
-   (`tools/wache/groesse.js`, Summe der Lazy-Dateien des Bausteins). Die Wächter-Ausgabe nennt beide Zahlen mit ihrer Grenze.
+7. **Größe: schlank ist das Ziel, die Grenze nur der Notanker** (Daniel, 09.11.2026). Start = was vor dem ersten Bild geladen wird
+   (HTML + CSS + JS + Startdaten, ohne Cover): Ziel unter 30 KB, hart 50 KB gzip. Nachgeladener Code (`import()`) je Baustein: Ziel
+   unter 12 KB, hart 20 KB gzip (`tools/wache/groesse.js`). Dazu zählt die **Gesamtsumme** (Start + alle Bausteine): Wächter-Ausgabe
+   und jeder PR nennen sie mit Vorher/Nachher, jeder Zuwachs braucht eine Funktion, die ihn trägt. Grenzen nur senken, nie anheben.
+   Nachgeladen wird nur, was der Start wirklich nicht braucht — nie, um eine Grenze zu umgehen (kein Abspalten, weil ein Topf voll
+   ist). Liegt eine Zahl über ihrem Ziel, wird erst gekürzt (wiederverwenden, vereinfachen), dann aufgeteilt; der PR nennt, was
+   gekürzt wurde. Nachgeladene Inhalte (Bilder, Video) zählen nicht, aber auch dort die sparsamste Variante bei voller Qualität.
 8. **Keine Tests im Repo** (Daniel, 25.10.2026). Geprüft wird von außen (Prüfweg). `tools/wache.mjs` ist kein Test, sondern
    ein Regelwächter am Quelltext (Punkte 1 bis 7); `tools/wache-probe.mjs` spielt ihm eingebaute Verstöße vor (Selbstprobe, prüft keine App).
 9. **Daten** stammen nur aus dem öffentlichen Repo `danielzaiser91/anime-kalender-de` (`public/data`, `data/kennungen.json`), nie von
