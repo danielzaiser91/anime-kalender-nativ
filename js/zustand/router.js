@@ -1,9 +1,10 @@
-// Adresse im Hash, teilbar, kein Neuladen beim Blättern: "#/woche", "#/woche/JJJJ-Www", dazu "/t/<Kennung>" für das Panel eines Titels
-// ("#/woche/2026-W45/t/1572", kurz "#/t/1572" über der gerade gezeigten Ansicht).
+// Adresse im Hash, teilbar, kein Neuladen beim Blättern: "#/woche", "#/woche/JJJJ-Www", "#/monat", "#/monat/JJJJ-MM", dazu "/t/<Kennung>"
+// für das Panel eines Titels ("#/woche/2026-W45/t/1572", kurz "#/t/1572" über der gerade gezeigten Ansicht).
 import { istWochenschluessel } from '../logik/zeit.js'
+import { istMonatsschluessel } from '../logik/monat.js'
 
 const KENNUNG = /^\d+$/
-const GUELTIG = { woche: istWochenschluessel }
+const GUELTIG = { woche: istWochenschluessel, monat: istMonatsschluessel }
 
 export function leseHash(hash) {
   const teile = hash.replace(/^#\/?/, '').split('/')

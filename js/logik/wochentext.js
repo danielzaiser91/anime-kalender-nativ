@@ -29,3 +29,8 @@ export const wochentagName = (datum) => WOCHENTAG.format(ausDatum(datum))
 
 /** "2026-11-14" → "14.11.2026" */
 export const datumKurz = (datum) => datum.split('-').reverse().join('.')
+
+const MONAT_JAHR = format({ month: 'long', year: 'numeric' })
+
+/** "2026-11" → "November 2026" */
+export const monatsName = (monat) => MONAT_JAHR.format(ausDatum(`${monat}-01`))

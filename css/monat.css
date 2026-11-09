@@ -1,0 +1,209 @@
+/* Leiste (Ansicht, Datum-Sprung, Schalter), Favorit/Gesehen an der Kachel, Monatsansicht, Einstellungen. */
+.leiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding-top: var(--abstand);
+}
+
+.ansichten {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.ansicht,
+.schalter {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--rand);
+  border-radius: 0.5rem;
+  background: var(--flaeche);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ansicht[aria-current] {
+  background: var(--akzent);
+  border-color: var(--akzent);
+  color: #15171c;
+}
+
+.schalter[aria-pressed='true'] {
+  background: var(--flaeche-2);
+  border-color: var(--akzent-text);
+  color: var(--akzent-text);
+}
+
+.sprung {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.sprung input {
+  min-height: 44px;
+  padding: 0 0.5rem;
+  border: 1px solid var(--rand);
+  border-radius: 0.5rem;
+  background: var(--flaeche);
+  color: var(--text);
+  font: inherit;
+}
+
+.aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.375rem;
+}
+
+.kachel .schalter {
+  font-size: 0.875rem;
+}
+
+.monat-kopf,
+.monat-raster,
+.meintraege {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mdatum {
+  margin: 0;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.meintraege {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.meintrag {
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.meintrag a {
+  position: relative;
+  display: inline-block;
+  color: var(--text);
+}
+
+.meintrag a::after {
+  content: '';
+  position: absolute;
+  inset: -0.8rem -0.25rem;
+}
+
+.mzeit {
+  margin-right: 0.375rem;
+  color: var(--leise);
+  font-variant-numeric: tabular-nums;
+}
+
+.mmarke {
+  margin-left: 0.25rem;
+  color: var(--akzent-text);
+}
+
+.mtag {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--rand);
+}
+
+.mtag.fremd,
+.mtag.leer,
+.monat-kopf {
+  display: none;
+}
+
+.mtag.heute .mdatum {
+  color: var(--akzent-text);
+}
+
+@media (min-width: 40rem) {
+  .monat-kopf,
+  .monat-raster {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .monat-kopf {
+    color: var(--leise);
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  .monat-raster {
+    border-top: 1px solid var(--rand);
+    border-left: 1px solid var(--rand);
+  }
+
+  .mtag,
+  .mtag.fremd,
+  .mtag.leer {
+    display: block;
+    min-height: 6rem;
+    padding: 0.25rem;
+    border: 0;
+    border-right: 1px solid var(--rand);
+    border-bottom: 1px solid var(--rand);
+  }
+
+  .mtag.fremd {
+    background: var(--flaeche-2);
+  }
+
+  .mtag.heute {
+    outline: 2px solid var(--akzent-text);
+    outline-offset: -2px;
+  }
+
+  .mname {
+    display: none;
+  }
+}
+
+.panel-inhalt > .wahl,
+.panel-inhalt > .wahl-block {
+  margin: 0 var(--abstand);
+}
+
+.wahl {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 44px;
+}
+
+.wahl input {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.wahl-block {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.wahl-block .meldung {
+  padding: 0;
+}
+
+#einstellungen .panel-inhalt {
+  padding-top: var(--abstand);
+}
+
+.wahl-block .meldung:empty {
+  display: none;
+}
