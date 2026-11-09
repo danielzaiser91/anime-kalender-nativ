@@ -8,18 +8,18 @@ function coverKnoten(cover) {
   return h('img', { class: 'cover', src: cover, alt: '', width: '56', height: '84', loading: 'lazy', decoding: 'async' })
 }
 
-function titelKnoten(termin, { ak, woche }) {
-  return h('h3', { class: 'titel' }, ak ? h('a', { href: hashFuerTitel(woche, ak), 'aria-haspopup': 'dialog' }, termin.name) : termin.name)
+function titelKnoten(termin, { ak, ort }) {
+  return h('h3', { class: 'titel' }, ak ? h('a', { href: hashFuerTitel(ort, ak), 'aria-haspopup': 'dialog' }, termin.name) : termin.name)
 }
 
-export function kachel(termin, titel, woche) {
+export function kachel(termin, titel, ort) {
   const info = titel[termin.titleId] ?? {}
   const zeit = zeitText(termin)
   return h(
     'li',
     { class: 'kachel' },
     coverKnoten(info.cover),
-    h('div', { class: 'text' }, titelKnoten(termin, { ak: info.ak, woche }), h('p', { class: 'folge' }, folgeZeile(termin)), marke(termin) && h('p', { class: 'marke' }, marke(termin))),
+    h('div', { class: 'text' }, titelKnoten(termin, { ak: info.ak, ort }), h('p', { class: 'folge' }, folgeZeile(termin)), marke(termin) && h('p', { class: 'marke' }, marke(termin))),
     zeit && h('p', { class: 'zeit' }, zeit),
   )
 }

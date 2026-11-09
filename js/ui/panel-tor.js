@@ -1,13 +1,13 @@
 // Tor zum Panel: lädt den Code erst, wenn ein Titel in der Adresse steht.
-import { hashFuerWoche } from '../zustand/router.js'
+import { hashFuerOrt } from '../zustand/router.js'
 import { meldung } from './bausteine/meldung.js'
 
 function verdrahte(dialog, { store, fenster }) {
   if (dialog.dataset.verdrahtet) return
   dialog.dataset.verdrahtet = 'ja'
   dialog.addEventListener('close', () => {
-    const { titel, woche } = store.lies()
-    if (titel) fenster.location.hash = hashFuerWoche(woche)
+    const { titel, ort } = store.lies()
+    if (titel) fenster.location.hash = hashFuerOrt(ort)
   })
   dialog.addEventListener('click', (ereignis) => {
     if (ereignis.target === dialog) dialog.close()

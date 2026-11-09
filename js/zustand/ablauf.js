@@ -1,23 +1,26 @@
 // Verbindet Adresse, Daten und Store; bei Titelkennung im Hash auch der Baustein fürs Panel.
 import { heuteInBerlin, wocheVon } from '../logik/zeit.js'
 import { gruppeVonAk } from '../logik/titel.js'
+import { fuegeZusammen } from '../logik/woche.js'
+import { ORTE } from '../logik/ort.js'
 import { beobachteHash, leseHash } from './router.js'
 
-const LEERE_WOCHE = { termine: [], titel: {} }
-
-async function ladeAnsicht(lader, woche) {
+async function ladeAnsicht(lader, ort) {
   const stand = await lader.ladeStand()
-  const imBereich = woche >= stand.von && woche <= stand.bis
-  return { stand, daten: imBereich ? await lader.ladeWoche(woche) : LEERE_WOCHE }
+  const wochen = ORTE[ort.art].wochen(ort.schluessel).filter((woche) => woche >= stand.von && woche <= stand.bis)
+  return { stand, daten: fuegeZusammen(await Promise.all(wochen.map(lader.ladeWoche))) }
 }
 
-async function zeigeWoche({ store, lader }, woche, heute) {
-  store.setze({ woche, heute, status: 'laedt', daten: null })
+const gleich = (a, b) => a?.art === b.art && a?.schluessel === b.schluessel
+
+async function zeigeOrt({ store, lader }, ort, heute) {
+  store.setze({ ort, heute, status: 'laedt', daten: null })
+  const heutig = () => gleich(store.lies().ort, ort)
   try {
-    const ansicht = await ladeAnsicht(lader, woche)
-    if (store.lies().woche === woche) store.setze({ ...ansicht, status: 'bereit' })
+    const ansicht = await ladeAnsicht(lader, ort)
+    if (heutig()) store.setze({ ...ansicht, status: 'bereit' })
   } catch (fehler) {
-    if (store.lies().woche === woche) store.setze({ status: 'fehler', fehler: fehler.message })
+    if (heutig()) store.setze({ status: 'fehler', fehler: fehler.message })
   }
 }
 
@@ -35,16 +38,17 @@ async function zeigeTitel({ store, lader, jetzt }, ak) {
   }
 }
 
-/** Die Woche der Adresse; ein Titel ohne Woche bleibt über der gerade gezeigten. */
-function wocheDerRoute(route, aktuell, heute) {
-  return route.woche ?? (route.titel ? aktuell.woche : null) ?? wocheVon(heute)
+/** Die Ansicht der Adresse: ohne Schlüssel die von heute, ein Titel ohne Ansicht bleibt über der gerade gezeigten. */
+function ortDerRoute(route, aktuell, heute) {
+  if (route.art) return { art: route.art, schluessel: route.schluessel ?? ORTE[route.art].von(heute) }
+  return route.titel && aktuell.ort ? aktuell.ort : { art: 'woche', schluessel: wocheVon(heute) }
 }
 
 async function zeigeRoute(abhaengigkeiten, route, heute) {
   const { store } = abhaengigkeiten
-  const woche = wocheDerRoute(route, store.lies(), heute)
-  const neueWoche = woche !== store.lies().woche || store.lies().status === 'fehler'
-  const geladen = neueWoche ? zeigeWoche(abhaengigkeiten, woche, heute) : Promise.resolve()
+  const ort = ortDerRoute(route, store.lies(), heute)
+  const neu = !gleich(store.lies().ort, ort) || store.lies().status === 'fehler'
+  const geladen = neu ? zeigeOrt(abhaengigkeiten, ort, heute) : Promise.resolve()
   await Promise.all([geladen, zeigeTitel(abhaengigkeiten, route.titel)])
 }
 
