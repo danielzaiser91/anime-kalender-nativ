@@ -22,3 +22,10 @@ export const kalenderwoche = (woche) => `KW ${Number(woche.slice(-2))}`
 const STAND = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', dateStyle: 'medium', timeStyle: 'short' })
 
 export const standText = (iso) => STAND.format(Date.parse(iso))
+
+const WOCHENTAG = format({ weekday: 'long' })
+
+export const wochentagName = (datum) => WOCHENTAG.format(ausDatum(datum))
+
+/** "2026-11-14" → "14.11.2026" */
+export const datumKurz = (datum) => datum.split('-').reverse().join('.')

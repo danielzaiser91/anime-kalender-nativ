@@ -72,11 +72,7 @@ jobs:
           persist-credentials: false
       - name: Verdichten und Größen prüfen
         if: steps.vergleich.outputs.noetig == 'true'
-        run: |
-          mkdir _site
-          cp -r index.html css js _site/
-          node tools/verdichten.mjs altrepo _site/data "${{ steps.vergleich.outputs.sha }}"
-          node tools/wache.mjs _site
+        run: sh tools/bauen.sh altrepo _site "${{ steps.vergleich.outputs.sha }}"
       - name: Artefakt hochladen
         if: steps.vergleich.outputs.noetig == 'true' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3

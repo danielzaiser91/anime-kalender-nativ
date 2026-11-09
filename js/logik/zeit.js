@@ -41,3 +41,6 @@ export const istWochenschluessel = (text) => /^\d{4}-W\d{2}$/.test(text) && woch
 export function heuteInBerlin(jetztMs) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(jetztMs)
 }
+
+/** Tage von `von` bis `bis` (negativ, wenn `bis` früher liegt). */
+export const diffTage = (von, bis) => (ausDatum(bis) - ausDatum(von)) / TAG_MS

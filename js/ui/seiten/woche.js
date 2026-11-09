@@ -6,9 +6,9 @@ import { tageDerWoche } from '../../logik/zeit.js'
 import { gruppiereNachTag } from '../../logik/woche.js'
 import { standText, tagUeberschrift } from '../../logik/wochentext.js'
 
-function tagKnoten(tag, titel, heute) {
+function tagKnoten(tag, { titel, heute, woche }) {
   const ueberschrift = h('h2', { id: `tag-${tag.datum}` }, tagUeberschrift(tag.datum), tag.datum === heute && h('span', { class: 'heute-marke' }, 'heute'))
-  const inhalt = tag.termine.length ? h('ol', { class: 'termine' }, tag.termine.map((t) => kachel(t, titel))) : h('p', { class: 'leer' }, 'Keine Termine')
+  const inhalt = tag.termine.length ? h('ol', { class: 'termine' }, tag.termine.map((t) => kachel(t, titel, woche))) : h('p', { class: 'leer' }, 'Keine Termine')
   return h('section', { class: 'tag', 'aria-labelledby': `tag-${tag.datum}` }, ueberschrift, inhalt)
 }
 
@@ -20,7 +20,8 @@ function inhalt(zustand) {
   if (zustand.status === 'fehler') return meldung(`Die Woche konnte nicht geladen werden (${zustand.fehler}).`)
   if (!zustand.daten) return meldung('Lädt …')
   const tage = gruppiereNachTag(zustand.daten.termine, tageDerWoche(zustand.woche))
-  return h('div', { class: 'tage' }, tage.map((tag) => tagKnoten(tag, zustand.daten.titel, zustand.heute)))
+  const kontext = { titel: zustand.daten.titel, heute: zustand.heute, woche: zustand.woche }
+  return h('div', { class: 'tage' }, tage.map((tag) => tagKnoten(tag, kontext)))
 }
 
 export function wochenseite(zustand) {
