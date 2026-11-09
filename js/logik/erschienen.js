@@ -1,4 +1,4 @@
-// Ist ein Termin schon durch, nach Datum und Uhrzeit? Regel wie shared/logic.ts istErschienen der Hauptseite. Rein, ohne DOM.
+// Ist ein Termin schon durch? Wie shared/logic.ts istErschienen.
 const BERLIN = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Berlin', hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
 
 const teileVon = (ms) => Object.fromEntries(BERLIN.formatToParts(ms).map((t) => [t.type, t.value]))

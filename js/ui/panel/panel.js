@@ -1,4 +1,4 @@
-// Das Panel eines Titels als <dialog>: Bühne, Antwort-Kasten, Wege, Termine, Eckdaten. Wird erst beim ersten Öffnen geladen (panel-tor.js).
+// Das Panel eines Titels als <dialog>; wird erst beim ersten Öffnen geladen (panel-tor.js).
 import { h } from '../dom.js'
 import { heuteInBerlin } from '../../logik/zeit.js'
 import { panelSicht } from '../../logik/panel-sicht.js'

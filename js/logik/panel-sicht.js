@@ -1,4 +1,4 @@
-// Alles, was das Panel zu einem Titelbaustein zeigt, als reine Daten: Antwort mit Worten, Wege, Termine, Eckdaten.
+// Alles, was das Panel zeigt, als reine Daten: Antwort, Wege, Termine, Eckdaten.
 import { berechneAntwort } from './antwort.js'
 import { kastenText } from './antwort-text.js'
 

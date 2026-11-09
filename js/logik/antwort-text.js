@@ -1,4 +1,4 @@
-// Die Worte des Antwort-Kastens zu einer Antwort (antwort.js). Texte wie web/src/lib/i18n*.ts der Hauptseite.
+// Worte des Antwort-Kastens (Hauptseite: i18n).
 import { datumKurz, wochentagName } from './wochentext.js'
 import { diffTage } from './zeit.js'
 

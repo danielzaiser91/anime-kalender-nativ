@@ -1,4 +1,4 @@
-// Titelbausteine: in welcher Datei ein Titel liegt und wie er heißt. Regeln wie shared/titles.ts der Hauptseite.
+// Titelbausteine: Datei und Name eines Titels (shared/titles.ts).
 export const GRUPPEN = 64
 
 export const gruppeVonAk = (ak) => Number(ak) % GRUPPEN

@@ -1,4 +1,4 @@
-// Was ein Anbieter schon geliefert hat, ob die deutsche Fassung abgeschlossen ist, und die um Wochenplan und Kanal-Bestand ergänzten Bereiche (folgen-spanne.ts, stream-bereiche.ts, prime-kanal.ts der Hauptseite).
+// Bestand eines Anbieters, deutsche Fassung abgeschlossen, Bereiche um Wochenplan und Kanal-Bestand (Hauptseite: folgen-spanne, stream-bereiche, prime-kanal).
 import { istErschienen } from './erschienen.js'
 import { addiereTage } from './zeit.js'
 import { folgenVon } from './dub.js'

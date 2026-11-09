@@ -1,4 +1,4 @@
-// Teilregeln der Antwort, portiert aus antwort-regeln.ts der Hauptseite. Termine sind schon ausgerechnet (events), Pläne sind die Kurzfassung der Releases.
+// Teilregeln der Antwort (Hauptseite: antwort-regeln.ts); Termine sind ausgerechnet, Pläne die Kurzfassung der Releases.
 import { istErschienen, katalogstartOhneUhrzeit } from './erschienen.js'
 
 export function zaehleErschienen(events, jetzt) {

@@ -1,4 +1,4 @@
-// Das Tor zum Panel: lädt den Panel-Code erst, wenn ein Titel in der Adresse steht, und hält den <dialog> im Takt mit dem Store.
+// Tor zum Panel: lädt den Code erst, wenn ein Titel in der Adresse steht.
 import { hashFuerWoche } from '../zustand/router.js'
 
 function verdrahte(dialog, { store, fenster }) {

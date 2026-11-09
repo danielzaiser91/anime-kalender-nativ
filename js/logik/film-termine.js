@@ -1,4 +1,4 @@
-// Kino und Stream eines Films in einem Kasten. Portiert aus web/src/components/detail/film-termine.ts der Hauptseite.
+// Kino und Stream eines Films in einem Kasten (film-termine.ts).
 import { anbieterName } from './folge.js'
 import { addiereTage } from './zeit.js'
 

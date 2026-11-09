@@ -1,4 +1,4 @@
-// Verbindet Adresse, Daten und Store: Woche laden, bei einer Titelkennung im Hash auch den Titelbaustein fürs Panel.
+// Verbindet Adresse, Daten und Store; bei Titelkennung im Hash auch der Baustein fürs Panel.
 import { heuteInBerlin, wocheVon } from '../logik/zeit.js'
 import { gruppeVonAk } from '../logik/titel.js'
 import { beobachteHash, leseHash } from './router.js'

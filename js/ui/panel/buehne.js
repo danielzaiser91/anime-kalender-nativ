@@ -1,4 +1,4 @@
-// Die Bühne des Panels: Banner, Poster, Name, Schließen und Teilen. Der Name steht als Überschrift des Dialogs.
+// Bühne des Panels: Banner, Poster, Name, Schließen, Teilen.
 import { h } from '../dom.js'
 import { titelAdresse } from '../../logik/woche.js'
 

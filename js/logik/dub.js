@@ -1,4 +1,4 @@
-// Folgenbereiche des deutschen Tons. Portiert aus shared/dub-grenze.ts der Hauptseite (gleiche Regeln, ohne Kommentarchronik).
+// Folgenbereiche des deutschen Tons (shared/dub-grenze.ts).
 // Ein Bereich ist { from, to, dub } in der Zählung des Anbieters; "nicht erfasst" ist etwas anderes als "ohne deutschen Ton".
 const nachAnfang = (a, b) => a.from - b.from
 const kurz = (r) => (r.from === r.to ? `${r.from}` : `${r.from}–${r.to}`)

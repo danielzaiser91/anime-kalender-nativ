@@ -1,12 +1,12 @@
 // Die Antwort auf "gibt es das auf Deutsch, und wo steht es?": art = laeuft | fertig | teilweise | film | disc | ohne.
-// Portiert aus web/src/components/detail/antwort-berechnen.ts. Nicht übernommen: Kinofilm ohne deutsche Fassung (art kino, Daten fehlen),
-// widerlegte Termine, die einzelnen Bände einer Disc, ausgebliebene Folgen und die Takt-Prüfung ("Takt unklar").
+// Nach antwort-berechnen.ts; nicht übernommen: Kino ohne deutsche Fassung, widerlegte Termine, Disc-Bände,
+// ausgebliebene Folgen, "Takt unklar".
 import { antwortKontext } from './antwort-kontext.js'
 import { dubAbdeckung, folgenVon } from './dub.js'
 import { belegteBereiche, fertigAntwort, gesamtGeschaetzt, gesamtIstBelegt, istBelegtAbgeschlossen, deutschBegonnen } from './antwort-regeln.js'
 import { filmTermine, imKinoBanner } from './film-termine.js'
 
-// Die letzte Folge des Blocks, der mit `n` am selben Tag erscheint (nur belegte Termine, lückenlos ab `n`); wie shared/folgenblock.ts.
+// Letzte Folge des Blocks ab `n` am selben Tag (nur belegte Termine, lückenlos); wie shared/folgenblock.ts.
 function folgenblockBis(derselben, n) {
   if (n.episode == null || n.estimated || n.sichtung || n.releaseType !== 'weekly') return undefined
   const amTag = derselben.filter((e) => e.date === n.date && !e.estimated && !e.sichtung)

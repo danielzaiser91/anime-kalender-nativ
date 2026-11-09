@@ -1,4 +1,4 @@
-// Joyn hält ein rollendes Fenster: Die Pille nennt, was jetzt abrufbar ist, und die nächste Folge. Wie web/src/lib/joyn.ts der Hauptseite.
+// Joyn hält ein rollendes Fenster: was jetzt abrufbar ist und die nächste Folge (web/src/lib/joyn.ts).
 import { berlinText } from './erschienen.js'
 
 function bereicheAus(nummern) {

@@ -1,4 +1,4 @@
-// Bezugswege (watchLinks): Mediatheken und Kanäle (Stream) und Händler (Kauf). Aus wege-sortieren.ts, weg-doppel.ts und legende-zeilen.ts der Hauptseite.
+// Bezugswege: Mediatheken, Kanäle und Händler (Hauptseite: wege-sortieren, weg-doppel, legende-zeilen).
 import { adresseIstOmu, istToggo, seitenKern } from './adresse.js'
 import { belegteBereiche } from './antwort-regeln.js'
 import { bereicheKurz, zusammengefasst } from './dub.js'

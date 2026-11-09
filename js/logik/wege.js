@@ -1,4 +1,4 @@
-// Wege nach Zugang gruppiert, je Weg Sprachurteil und Folgenangabe; Regeln aus wege-sortieren.ts, legende-zeilen.ts, dub-zeilen.ts der Hauptseite (ohne Prime-Kanal-Bestand und Cartoon-Teilwege).
+// Wege nach Zugang, je Weg Sprachurteil und Folgenangabe (Hauptseite: wege-sortieren, legende-zeilen, dub-zeilen).
 import { anbieterName } from './folge.js'
 import { adresseIstOmu } from './adresse.js'
 import { bereicheKurz, dubBild } from './dub.js'

@@ -1,4 +1,4 @@
-// Die Abschnitte des Panels unter der Bühne: Antwort-Kasten, Wege, Termine, Eckdaten. Worte kommen fertig aus logik/ (panel-sicht.js).
+// Abschnitte unter der Bühne: Antwort-Kasten, Wege, Termine, Eckdaten; Worte kommen aus logik/panel-sicht.js.
 import { h } from '../dom.js'
 import { STATUS_TEXT } from '../../logik/wege.js'
 

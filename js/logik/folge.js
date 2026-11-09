@@ -1,4 +1,4 @@
-// Was unter einem Titel steht: Anbieter, Folge, Uhrzeit. Regeln wie in der Hauptseite (web/src/components/kalender/Marken.tsx).
+// Anbieter, Folge, Uhrzeit unter einem Titel (Hauptseite: Marken.tsx).
 const ANBIETER = {
   crunchyroll: 'Crunchyroll',
   netflix: 'Netflix',

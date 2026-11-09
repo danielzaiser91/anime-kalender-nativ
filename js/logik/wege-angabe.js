@@ -1,4 +1,4 @@
-// Die Folgenangabe an der Pille eines Wegs ("Fg. 1–36", "≈ Fg. 1–6", "nur Fg. 1"), aus folgen-angabe.ts der Hauptseite.
+// Folgenangabe an der Pille eines Wegs ("Fg. 1–36", "≈ Fg. 1–6"), nach folgen-angabe.ts.
 import { bereicheGekuerzt, bereicheKurz, dubBild, zusammengefasst } from './dub.js'
 import { istErschienen } from './erschienen.js'
 import { joynAngabe } from './joyn.js'

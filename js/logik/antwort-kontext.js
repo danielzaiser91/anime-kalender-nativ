@@ -1,4 +1,4 @@
-// Alles, was die Antwort über einen Titel zuerst wissen muss: welche Termine sie beantworten, wie viele Folgen erschienen und wie viele es sind.
+// Was die Antwort zuerst wissen muss: welche Termine, wie viele Folgen erschienen und wie viele es sind.
 // Portiert aus web/src/components/detail/antwort-berechnen.ts der Hauptseite (Abweichungen: siehe antwort.js).
 import { imKinoBanner } from './film-termine.js'
 import { istErschienen } from './erschienen.js'

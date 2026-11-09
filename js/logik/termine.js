@@ -1,4 +1,4 @@
-// Die Termine (Kommendes zuerst, dann zuletzt Erschienenes, Zeilen wie die Wochenansicht) und die Eckdaten eines Titels fürs Panel.
+// Termine (Kommendes, dann Erschienenes) und Eckdaten eines Titels fürs Panel.
 import { istErschienen } from './erschienen.js'
 import { folgeZeile, marke, zeitText } from './folge.js'
 import { datumKurz, wochentagName } from './wochentext.js'

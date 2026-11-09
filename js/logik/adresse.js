@@ -1,4 +1,4 @@
-// Adressen vergleichen: dieselbe Seite hinter verschiedenen Schreibweisen. Aus shared/adresse-kern.ts und chips-regeln.ts der Hauptseite.
+// Adressen vergleichen, auch bei verschiedener Schreibweise (shared/adresse-kern.ts, chips-regeln.ts).
 export function adressKern(u) {
   if (!u) return ''
   const ohne = u.replace(/^https?:\/\//, '').replace(/^www\./, '').split('?')[0].replace(/\/$/, '').toLowerCase()
