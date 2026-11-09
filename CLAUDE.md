@@ -7,8 +7,8 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 ## Harte Grenzen
 
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
-   Webfonts, keine Bibliothek, kein Framework, kein Bundler. Einzige Außenaufrufe im Browser: Cover als `<img>` (Hotlink, Entscheidung
-   25.10.2026) und Links, die der Nutzer anklickt. Fetch nur auf eigene Dateien.
+   Webfonts, keine Bibliothek, kein Framework, kein Bundler. Einzige Außenaufrufe im Browser: Cover und das Banner im Panel als `<img>` (Hotlink, Entscheidung
+   25.10.2026, Banner gleiche Art und gleicher Anbieter, 09.11.2026) und Links, die der Nutzer anklickt. Fetch nur auf eigene Dateien.
 2. **Schrift:** Text `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`; Überschriften
    `'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif` (Variante E der Hauptseite).
 3. **Umfang:** Modul höchstens 200 Zeilen, Funktion höchstens 40, höchstens 3 Parameter (sonst ein Objekt). Neues bekommt ein neues Modul

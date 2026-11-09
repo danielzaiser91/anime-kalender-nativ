@@ -5,6 +5,7 @@ import { pruefeAussenadressen, pruefeDateiNamen, pruefePackage } from './wache/r
 import { pruefeDateiUmfang, pruefeFunktionen } from './wache/regeln-umfang.js'
 import { pruefeSchichten } from './wache/regeln-schichten.js'
 import { pruefeDomFrei, pruefeModulvariablen, pruefeVerbote } from './wache/regeln-verbote.js'
+import { FAELLE_BUDGET } from './wache-probe/budget.js'
 
 const zeilen = (anzahl) => Array.from({ length: anzahl }, (_, i) => `// Zeile ${i}`).join('\n')
 const funktion = (kopf, innen) => `function ${kopf} {\n${zeilen(innen)}\n}\n`
@@ -55,6 +56,7 @@ const FAELLE = [
   ['Funktion 40 Zeilen', () => code(pruefeFunktionen, 'js/a.js', funktion('f()', 38)), 0],
   ['4 Parameter', () => code(pruefeFunktionen, 'js/a.js', funktion('f(a, b, c, d)', 1)), 1],
   ['3 Parameter', () => code(pruefeFunktionen, 'js/a.js', funktion('f(a, b, c)', 1)), 0],
+  ...FAELLE_BUDGET,
 ]
 
 function main() {
