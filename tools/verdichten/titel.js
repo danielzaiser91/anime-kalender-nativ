@@ -15,6 +15,10 @@ const nur = (quelle, felder) => Object.fromEntries(felder.filter((f) => quelle?.
 // TMDB liefert feste Breiten: Poster 342 und Banner 780 reichen für die Bühne.
 const bild = (url, von, nach) => (typeof url === 'string' && url.startsWith('https://') ? url.replace(von, nach) : null)
 
+// Adressen kommen als Link ins Panel: nur http(s), sonst entfällt das Feld (kein javascript: aus den Daten).
+const ADRESSFELDER = ['url', 'seite']
+const mitSicherenAdressen = (weg) => Object.fromEntries(Object.entries(weg).filter(([f, v]) => !ADRESSFELDER.includes(f) || v === '' || /^https?:\/\//.test(v)))
+
 const plan = (release) => ({ ...nur(release, PLAN), ...nur(release.schedule, SCHEDULE) })
 
 function baustein(titel, ak, { termine, plaene }) {
@@ -25,8 +29,8 @@ function baustein(titel, ak, { termine, plaene }) {
     cover: bild(titel.coverImage, '/t/p/w500/', '/t/p/w342/'),
     banner: bild(titel.bannerImage, '/t/p/w1280/', '/t/p/w780/'),
     ...nur(titel, ECKDATEN),
-    streams: (titel.streams ?? []).map((s) => nur(s, WEG)),
-    kaufwege: (titel.watchLinks ?? []).map((w) => nur(w, KAUFWEG)),
+    streams: (titel.streams ?? []).map((s) => mitSicherenAdressen(nur(s, WEG))),
+    kaufwege: (titel.watchLinks ?? []).map((w) => mitSicherenAdressen(nur(w, KAUFWEG))),
     termine: termine.map((e) => ({ releaseSlug: e.releaseSlug, ...kuerzeTermin(e) })),
     plaene: plaene.map(plan),
   }
