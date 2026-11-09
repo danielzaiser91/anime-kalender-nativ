@@ -1,8 +1,8 @@
 // Wege nach Zugang, je Weg Sprachurteil und Folgenangabe (Hauptseite: wege-sortieren, legende-zeilen, dub-zeilen).
 import { anbieterName } from './folge.js'
 import { adresseIstOmu } from './adresse.js'
-import { bereicheKurz, dubBild } from './dub.js'
-import { deutschAbgeschlossen, titelMitTerminBereichen } from './wege-bestand.js'
+import { bereicheKurz, deutsche, dubBild, hatDeutsch } from './dub.js'
+import { deutschAbgeschlossen } from './wege-bestand.js'
 import { bezugZeilen } from './wege-bezug.js'
 import { folgenAngabe } from './wege-angabe.js'
 
@@ -11,7 +11,7 @@ export const STATUS_TEXT = { belegt: '✓ Deutsch', jwDeutsch: '✓ Deutsch', ju
 const REIHENFOLGE = ['kostenlos', 'abo', 'kauf', 'unbekannt', 'offen']
 
 function nurOmu(weg, titel) {
-  if (weg.dub === true || weg.dubRanges?.some((r) => r.dub)) return false
+  if (weg.dub === true || hatDeutsch(weg.dubRanges)) return false
   if (titel.ankuendigung?.platform === weg.platform) return true
   const termine = titel.plaene.filter((p) => p.platform === weg.platform)
   return termine.length > 0 && termine.every((p) => p.sprache === 'omu')
@@ -49,18 +49,15 @@ function streamZeile(weg, ctx) {
   }
 }
 
-const signatur = (w) => `${w.platform}|${w.zugang ?? ''}|${w.dub}|${w.dubAbgeleitet ?? ''}|${JSON.stringify((w.dubRanges ?? []).filter((r) => r.dub).map((r) => [r.from, r.to]))}`
+const signatur = (w) => `${w.platform}|${w.zugang ?? ''}|${w.dub}|${w.dubAbgeleitet ?? ''}|${JSON.stringify(deutsche(w.dubRanges ?? []).map((r) => [r.from, r.to]))}`
 const ohneDoppel = (wege) => wege.filter((w, i) => wege.findIndex((x) => signatur(x) === signatur(w)) === i)
 
-/** Streams (Bereiche um Wochenplan und Kanal-Bestand ergänzt), dazu Bezugswege und Händler. Ohne Sprachbeleg: "Weitere Anbieter". */
-export function wegZeilen(ctx) {
-  const { streams } = titelMitTerminBereichen(ctx.titel, ctx.jetzt)
-  return [...ohneDoppel(streams).map((s) => streamZeile(s, { ...ctx, streams })), ...bezugZeilen(ctx.titel)]
-}
-
-/** Die Wege nach Gruppe; die Überschrift steht, wo es etwas zu trennen gibt oder wo es Geld kostet. */
+/**
+ * Die Wege nach Gruppe: Streams (`ctx.streams`, Bereiche um Wochenplan und Kanal-Bestand ergänzt), Bezugswege und Händler.
+ * Die Überschrift steht, wo es etwas zu trennen gibt oder wo es Geld kostet. Ohne Sprachbeleg: "Weitere Anbieter".
+ */
 export function wegGruppen(ctx) {
-  const zeilen = wegZeilen(ctx)
+  const zeilen = [...ohneDoppel(ctx.streams).map((s) => streamZeile(s, ctx)), ...bezugZeilen(ctx.titel)]
   const belegte = REIHENFOLGE.filter((g) => zeilen.some((z) => z.gruppe === g))
   return belegte.map((g) => ({ gruppe: g, name: ZUGANG_NAME[g], zeigeName: belegte.length > 1 || g === 'kauf', zeilen: zeilen.filter((z) => z.gruppe === g) }))
 }

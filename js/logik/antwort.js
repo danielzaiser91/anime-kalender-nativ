@@ -2,8 +2,8 @@
 // Nach antwort-berechnen.ts; nicht übernommen: Kino ohne deutsche Fassung, widerlegte Termine, Disc-Bände,
 // ausgebliebene Folgen, "Takt unklar".
 import { antwortKontext } from './antwort-kontext.js'
-import { dubAbdeckung, folgenVon } from './dub.js'
-import { belegteBereiche, fertigAntwort, gesamtGeschaetzt, gesamtIstBelegt, istBelegtAbgeschlossen, deutschBegonnen } from './antwort-regeln.js'
+import { deutsche, dubAbdeckung, folgenVon, hatDeutsch } from './dub.js'
+import { belegteBereiche, fertigAntwort, gesamtGeschaetzt, gesamtIstBelegt, hatDubWeg, istBelegtAbgeschlossen, deutschBegonnen } from './antwort-regeln.js'
 import { filmTermine, imKinoBanner } from './film-termine.js'
 
 // Letzte Folge des Blocks ab `n` am selben Tag (nur belegte Termine, lückenlos); wie shared/folgenblock.ts.
@@ -23,10 +23,10 @@ function belegende({ titel, abgeschlossen }) {
 function deckung(k) {
   const { titel, gesamt } = k
   const belegen = belegende(k)
-  const kauf = titel.kaufwege.filter((w) => belegteBereiche(w).some((r) => r.dub))
+  const kauf = titel.kaufwege.filter((w) => hatDeutsch(belegteBereiche(w)))
   const abdeckung = [...belegen.map((s) => dubAbdeckung(s.dubRanges, gesamt)), ...kauf.map((w) => dubAbdeckung(belegteBereiche(w), gesamt))]
   if (!abdeckung.length && k.hatSynchro) abdeckung.push(dubAbdeckung(undefined, gesamt))
-  const vereint = folgenVon([...belegen.flatMap((s) => s.dubRanges ?? []), ...kauf.flatMap(belegteBereiche)].filter((r) => r.dub), gesamt)
+  const vereint = folgenVon(deutsche([...belegen.flatMap((s) => s.dubRanges ?? []), ...kauf.flatMap(belegteBereiche)]), gesamt)
   const teilOhneZahl = Boolean(titel.deErstausgabe?.teil) && vereint.size === 0 && !belegen.some((s) => s.dub === true)
   const vollstaendig = !teilOhneZahl && (abdeckung.some((a) => a.vollstaendig) || Boolean(gesamt && vereint.size >= gesamt))
   return { vereint: vereint.size, teilOhneZahl, vollstaendig, belegteFolgen: Math.max(0, vereint.size, ...abdeckung.map((a) => a.belegt)), restBelegt: restBelegt(belegen, gesamt) }
@@ -60,13 +60,13 @@ function laeuft(k) {
   }
 }
 
-const zahlen = (k) => ({ raus: k.raus || k.gesamt, gesamt: k.gesamt })
+const fertig = (k, d) => fertigAntwort({ raus: k.raus || k.gesamt, gesamt: k.gesamt, belegteFolgen: d.vereint }, k.alle, { heute: k.heute, plaene: k.plaene })
 
 function mitKuenftigem(k, d) {
   const { titel, heute, jetzt } = k
   const begonnen = k.hatSynchro && deutschBegonnen(titel, { erschienene: k.raus, heute, plaene: k.plaene })
   if (istBelegtAbgeschlossen({ hatSynchro: begonnen, vollstaendig: d.vollstaendig, abgeschlossen: k.abgeschlossen }, k.alle, jetzt)) {
-    return fertigAntwort({ ...zahlen(k), belegteFolgen: d.vereint }, k.alle, { heute, plaene: k.plaene })
+    return fertig(k, d)
   }
   if (!k.ohneDisc.length) return { art: 'disc', datum: k.kuenftig[0].date }
   const plan = k.plaene.find((p) => p.slug === k.kuenftig[0].releaseSlug)
@@ -76,7 +76,7 @@ function mitKuenftigem(k, d) {
 
 function film(k) {
   const { titel, heute } = k
-  const deTermine = titel.streams.some((s) => s.dub === true) ? null : filmTermine(titel, heute)
+  const deTermine = hatDubWeg(titel) ? null : filmTermine(titel, heute)
   if (deTermine) return deTermine
   const imKino = k.plaene.some((p) => imKinoBanner(p, heute))
   const ohneWeg = !titel.streams.length && !titel.kaufwege.length && !imKino && !k.plaene.some((p) => p.releaseType === 'disc')
@@ -89,7 +89,7 @@ function ohneKuenftiges(k, d) {
   if (k.hatSynchro && !d.vollstaendig && k.gesamt) {
     return { art: 'teilweise', raus: d.teilOhneZahl ? undefined : d.belegteFolgen, gesamt: k.gesamt, gesamtBelegt: gesamtIstBelegt(titel, k.kopf, k.gesamt), restBelegt: d.restBelegt }
   }
-  if (k.hatSynchro || istErschienenOhneTermin(titel, k.plaene, heute)) return fertigAntwort({ ...zahlen(k), belegteFolgen: d.vereint }, k.alle, { heute, plaene: k.plaene })
+  if (k.hatSynchro || istErschienenOhneTermin(titel, k.plaene, heute)) return fertig(k, d)
   return { art: 'ohne', gesamt: k.gesamt }
 }
 

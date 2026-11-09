@@ -1,6 +1,6 @@
 // Tor zum Panel: lädt den Code erst, wenn ein Titel in der Adresse steht.
 import { hashFuerWoche } from '../zustand/router.js'
-import { h } from './dom.js'
+import { meldung } from './bausteine/meldung.js'
 
 function verdrahte(dialog, { store, fenster }) {
   if (dialog.dataset.verdrahtet) return
@@ -15,9 +15,7 @@ function verdrahte(dialog, { store, fenster }) {
 }
 
 function zeigeFehler(dialog) {
-  const zu = h('button', { type: 'button', class: 'panel-knopf' }, 'Schließen')
-  zu.addEventListener('click', () => dialog.close())
-  dialog.replaceChildren(h('div', { class: 'panel-inhalt' }, h('p', { class: 'meldung', role: 'status' }, 'Das Panel konnte nicht geladen werden. Seite neu laden und noch einmal versuchen.'), zu))
+  dialog.replaceChildren(meldung('Das Panel konnte nicht geladen werden. Seite neu laden und noch einmal versuchen.', () => dialog.close()))
   if (!dialog.open) dialog.showModal()
 }
 

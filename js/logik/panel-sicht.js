@@ -11,13 +11,13 @@ import { laufendBei, titelMitTerminBereichen } from './wege-bestand.js'
 function folgenLuecke(titel, antwort, ctx) {
   if (titel.format === 'MOVIE' || antwort.art === 'teilweise') return null
   const gesamt = antwort.art === 'laeuft' ? antwort.raus : titel.episodes
-  const wege = [...titelMitTerminBereichen(titel, ctx.jetzt).streams.map((s) => (s.dub === true && !laufendBei(titel, s.platform, ctx) ? s.dubRanges : undefined)), ...titel.kaufwege.map((w) => belegteBereiche(w))]
+  const wege = [...ctx.streams.map((s) => (s.dub === true && !laufendBei(titel, s.platform, ctx) ? s.dubRanges : undefined)), ...titel.kaufwege.map((w) => belegteBereiche(w))]
   return folgenOhneAnbieter(wege, gesamt)
 }
 
 export function panelSicht(titel, uhr) {
   const antwort = berechneAntwort(titel, uhr)
-  const ctx = { titel, heute: uhr.heute, jetzt: uhr.jetzt }
+  const ctx = { titel, heute: uhr.heute, jetzt: uhr.jetzt, streams: titelMitTerminBereichen(titel, uhr.jetzt).streams }
   return {
     antwort,
     text: kastenText(antwort, uhr.heute),

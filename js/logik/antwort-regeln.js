@@ -11,9 +11,19 @@ export function zaehleErschienen(events, jetzt) {
   return nummern.size + ohneNummer
 }
 
+const gruppen = (liste, schluessel) => [...Map.groupBy(liste, schluessel).values()]
+
+export const hatDubWeg = (titel) => titel.streams.some((s) => s.dub === true)
+
+/** Ein deutscher Wochenplan: Plan oder Termin, weder TV noch Disc. */
+export const deutscherWochenplan = (p) => p.releaseType === 'weekly' && p.platform !== 'tv' && p.platform !== 'disc'
+
+/** Japans Ende liegt vor heute (ohne Datum: das Jahr davor). */
+export const japanVorbei = (titel, heute) => (titel.jpEnd ? titel.jpEnd < heute : Boolean(titel.jpYear && titel.jpYear < Number(heute.slice(0, 4))))
+
 // Dieselbe Folge liegt bei mehreren Anbietern: jeder zählt für sich, der Kasten nimmt den weitesten.
 export function zaehleErschienenJeAnbieter(events, jetzt) {
-  return Math.max(0, ...[...Map.groupBy(events, (e) => e.platform).values()].map((liste) => zaehleErschienen(liste, jetzt)))
+  return Math.max(0, ...gruppen(events, (e) => e.platform).map((liste) => zaehleErschienen(liste, jetzt)))
 }
 
 const anzeigeFolge = (e) => Boolean(e.episode) && !e.sichtung
@@ -23,9 +33,9 @@ export function ohneSchonErschienene(offen, alle, jetzt) {
   return offen.filter((e) => !anzeigeFolge(e) || !da.has(e.episode))
 }
 
-export function deutscherWochentaktLaeuft(events, jetzt) {
-  const wochen = events.filter((e) => e.releaseType === 'weekly' && e.platform !== 'tv' && e.platform !== 'disc')
-  return [...Map.groupBy(wochen, (e) => e.releaseSlug).values()].some((liste) => liste.some((e) => istErschienen(e, jetzt)) && liste.some((e) => !istErschienen(e, jetzt)))
+function deutscherWochentaktLaeuft(events, jetzt) {
+  const raus = (e) => istErschienen(e, jetzt)
+  return gruppen(events.filter(deutscherWochenplan), (e) => e.releaseSlug).some((liste) => liste.some(raus) && !liste.every(raus))
 }
 
 export const istBelegtAbgeschlossen = ({ hatSynchro, vollstaendig, abgeschlossen }, events, jetzt) => hatSynchro && vollstaendig && abgeschlossen && !deutscherWochentaktLaeuft(events, jetzt)
@@ -36,12 +46,12 @@ const ersteDiscNochOffen = (plaene, heute) => {
 }
 
 function erstausgabeVorDisc(titel, plaene, heute) {
-  if (titel.streams.some((s) => s.dub === true)) return false
+  if (hatDubWeg(titel)) return false
   return !plaene.some((p) => p.platform !== 'disc' && (p.firstEpisodeDate ?? '9') <= heute) && ersteDiscNochOffen(plaene, heute)
 }
 
 export function deutschBegonnen(titel, { erschienene, heute, plaene }) {
-  if (titel.streams.some((s) => s.dub === true) || erschienene > 0) return true
+  if (hatDubWeg(titel) || erschienene > 0) return true
   const von = titel.deErstausgabe?.von
   const tag = Boolean(titel.deErstausgabe?.synchro && von && /^\d{4}-\d{2}-\d{2}$/.test(von) && von <= heute)
   return tag && !erstausgabeVorDisc(titel, plaene, heute)
@@ -63,11 +73,10 @@ export function katalogstartHeuteOffen(events, heute, plaene) {
   const fortsetzung = new Set(plaene.filter((p) => (p.firstEpisodeNumber ?? 1) > 1).map((p) => p.slug))
   const katalog = events.filter(katalogstartOhneUhrzeit)
   const ganzerTitelHeute = katalog.length > 0 && katalog.every((e) => e.date === heute)
-  return [...Map.groupBy(katalog, (e) => e.releaseSlug).values()].some((liste) => liste.every((e) => e.date === heute) && (ganzerTitelHeute || !fortsetzung.has(liste[0].releaseSlug)))
+  return gruppen(katalog, (e) => e.releaseSlug).some((liste) => liste.every((e) => e.date === heute) && (ganzerTitelHeute || !fortsetzung.has(liste[0].releaseSlug)))
 }
 
 export function fertigAntwort(zahlen, events, wann) {
-  const wochenplan = events.some((e) => e.releaseType === 'weekly' && e.platform !== 'tv' && e.platform !== 'disc')
-  const belegt = Boolean(zahlen.gesamt && zahlen.belegteFolgen >= zahlen.gesamt) || wochenplan
+  const belegt = Boolean(zahlen.gesamt && zahlen.belegteFolgen >= zahlen.gesamt) || events.some(deutscherWochenplan)
   return { art: 'fertig', raus: zahlen.raus, gesamt: zahlen.gesamt, gesamtAbgeleitet: !belegt, heuteOffen: katalogstartHeuteOffen(events, wann.heute, wann.plaene) || undefined }
 }

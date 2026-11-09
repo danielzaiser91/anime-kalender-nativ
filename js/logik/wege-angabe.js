@@ -1,12 +1,10 @@
 // Folgenangabe an der Pille eines Wegs ("Fg. 1–36", "≈ Fg. 1–6"), nach folgen-angabe.ts.
-import { bereicheGekuerzt, bereicheKurz, dubBild, zusammengefasst } from './dub.js'
+import { bereicheGekuerzt, deutsche, dubBild, folgenText, ungefaehr } from './dub.js'
 import { istErschienen } from './erschienen.js'
 import { joynAngabe } from './joyn.js'
 import { deutschAbgeschlossen, erschieneneSpanne, laeuftGerade, laufendBei, zaehlPlattform } from './wege-bestand.js'
 import { zaehleErschienen } from './antwort-regeln.js'
 import { datumKurz } from './wochentext.js'
-
-const ungefaehr = (text, geschaetzt) => (geschaetzt ? `≈ ${text}` : text)
 
 const einzelneFolge = (weg) => /youtube\.com\/watch\?/.test(weg.url ?? '') && !/[?&]list=/.test(weg.url ?? '')
 
@@ -54,7 +52,7 @@ export function folgenAngabe(weg, ctx) {
   const anbieterPlaene = titel.plaene.filter((p) => p.platform === plattform)
   const folgenLautReleases = Math.max(0, ...anbieterPlaene.map((p) => (p.firstEpisodeNumber ?? 1) - 1 + (p.episodeCount ?? 1)))
   if (titel.format === 'MOVIE' || (titel.episodes === 1 && folgenLautReleases <= 1)) return ''
-  const deutsch = (weg.dubRanges ?? []).filter((r) => r.dub)
+  const deutsch = deutsche(weg.dubRanges ?? [])
   if (einzelneFolge(weg) && deutsch.length === 1 && deutsch[0].from === 1 && deutsch[0].to === 1) return 'nur Fg. 1'
   const bild = dubBild(weg.dubRanges, titel.episodes)
   if (bild?.ohneTon.length && bild.deutsch.length) return gemischt(bild)
@@ -62,5 +60,5 @@ export function folgenAngabe(weg, ctx) {
   if (plan !== undefined) return plan
   if (!deutsch.length) return abgeleitet(weg, ctx)
   const events = titel.termine.filter((e) => anbieterPlaene.some((p) => p.slug === e.releaseSlug))
-  return ungefaehr(`Fg. ${bereicheKurz(zusammengefasst(deutsch))}`, ergaenzungGeschaetzt(events, weg.ergaenzteFolgen, ctx.jetzt))
+  return ungefaehr(folgenText(deutsch), ergaenzungGeschaetzt(events, weg.ergaenzteFolgen, ctx.jetzt))
 }

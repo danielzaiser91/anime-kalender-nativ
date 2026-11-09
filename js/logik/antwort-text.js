@@ -1,18 +1,20 @@
 // Worte des Antwort-Kastens (Hauptseite: i18n).
+import { ungefaehr } from './dub.js'
 import { datumKurz, wochentagName } from './wochentext.js'
 import { diffTage } from './zeit.js'
 
-const ungefaehr = (wert, geschaetzt) => (geschaetzt ? `≈ ${wert}` : String(wert))
 const folgen = (n) => `${n} ${String(n).replace('≈ ', '') === '1' ? 'Folge' : 'Folgen'}`
+
+const inEinheiten = (n, eins, mehr) => (n <= 1 ? `in ${eins}` : `in ${n} ${mehr}`)
 
 export function abstandImSatz(heute, datum) {
   const tage = diffTage(heute, datum)
   if (tage <= 0) return 'heute'
   if (tage === 1) return 'morgen'
   if (tage < 7) return `in ${tage} Tagen`
-  if (tage < 31.5) return Math.floor(tage / 7) === 1 ? 'in einer Woche' : `in ${Math.floor(tage / 7)} Wochen`
-  if (tage < 365) return Math.floor(tage / 30.44) <= 1 ? 'in einem Monat' : `in ${Math.floor(tage / 30.44)} Monaten`
-  return Math.floor(tage / 365) === 1 ? 'in einem Jahr' : `in ${Math.floor(tage / 365)} Jahren`
+  if (tage < 31.5) return inEinheiten(Math.floor(tage / 7), 'einer Woche', 'Wochen')
+  if (tage < 365) return inEinheiten(Math.floor(tage / 30.44), 'einem Monat', 'Monaten')
+  return inEinheiten(Math.floor(tage / 365), 'einem Jahr', 'Jahren')
 }
 
 const WAS = { erste: 'Erste', naechste: 'Nächste', finale: 'Finale' }

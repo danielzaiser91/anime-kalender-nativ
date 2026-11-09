@@ -2,12 +2,13 @@
 // Portiert aus web/src/components/detail/antwort-berechnen.ts der Hauptseite (Abweichungen: siehe antwort.js).
 import { imKinoBanner } from './film-termine.js'
 import { istErschienen } from './erschienen.js'
-import { angekuendigteLaenge, belegteBereiche, deutschBegonnen, ohneSchonErschienene, zaehleErschienenJeAnbieter } from './antwort-regeln.js'
+import { hatDeutsch } from './dub.js'
+import { angekuendigteLaenge, belegteBereiche, deutschBegonnen, hatDubWeg, japanVorbei, ohneSchonErschienene, zaehleErschienenJeAnbieter } from './antwort-regeln.js'
 
 const nachDatum = (a, b) => a.date.localeCompare(b.date) || (a.episode ?? 0) - (b.episode ?? 0)
 
 export const hatSynchroBeleg = (titel) =>
-  titel.streams.some((s) => s.dub === true) || Boolean(titel.hasVoices) || Boolean(titel.deErstausgabe?.synchro) || titel.kaufwege.some((w) => belegteBereiche(w).some((r) => r.dub))
+  hatDubWeg(titel) || Boolean(titel.hasVoices) || Boolean(titel.deErstausgabe?.synchro) || titel.kaufwege.some((w) => hatDeutsch(belegteBereiche(w)))
 
 function kopfPlaene(titel, { heute, hatSynchro }) {
   const kino = (p) => imKinoBanner(p, heute)
@@ -30,8 +31,6 @@ function gesamtZahl(titel, { kopf, alle }) {
   return Math.max(titel.episodes ?? 0, ausReleases, angekuendigteLaenge(titel, kopf)) || (nurWochen && alle.length > 1 ? alle.length : undefined)
 }
 
-const abgeschlossenJapan = (titel, heute) => (titel.jpEnd ? titel.jpEnd < heute : Boolean(titel.jpYear && titel.jpYear < Number(heute.slice(0, 4))))
-
 export function antwortKontext(titel, uhr) {
   const { heute, jetzt } = uhr
   const hatSynchro = hatSynchroBeleg(titel)
@@ -42,5 +41,5 @@ export function antwortKontext(titel, uhr) {
   const kuenftig = ohneSchonErschienene(offen, alle, jetzt).sort(nachDatum)
   const plaene = titel.plaene
   const raus = zaehleErschienenJeAnbieter(alle, jetzt)
-  return { titel, heute, jetzt, hatSynchro, ohneDisc, kopf, alle, kuenftig, plaene, raus, gesamt: gesamtZahl(titel, { kopf, alle }), abgeschlossen: abgeschlossenJapan(titel, heute) }
+  return { titel, heute, jetzt, hatSynchro, ohneDisc, kopf, alle, kuenftig, plaene, raus, gesamt: gesamtZahl(titel, { kopf, alle }), abgeschlossen: japanVorbei(titel, heute) }
 }
