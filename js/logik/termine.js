@@ -25,9 +25,8 @@ export function terminListe(titel, jetzt) {
 }
 
 const FORMAT = { TV: 'Serie', MOVIE: 'Film', OVA: 'OVA', SPECIAL: 'Special', TV_SHORT: 'Kurzserie', ONA: 'Web-Serie', MUSIC: 'Musik' }
-const JAHRESZEIT = { WINTER: 'Winter', SPRING: 'Frühling', SUMMER: 'Sommer', FALL: 'Herbst' }
 
-const japanText = (titel) => [JAHRESZEIT[titel.jpSeason], titel.jpYear].filter(Boolean).join(' ')
+const japanText = (titel) => (titel.jpYear ? String(titel.jpYear) : '')
 
 const fskText = (fsk) => (fsk === 0 ? 'FSK 0' : fsk ? `FSK ${fsk}` : '')
 

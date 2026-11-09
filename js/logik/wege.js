@@ -52,10 +52,10 @@ function streamZeile(weg, ctx) {
 const signatur = (w) => `${w.platform}|${w.zugang ?? ''}|${w.dub}|${w.dubAbgeleitet ?? ''}|${JSON.stringify((w.dubRanges ?? []).filter((r) => r.dub).map((r) => [r.from, r.to]))}`
 const ohneDoppel = (wege) => wege.filter((w, i) => wege.findIndex((x) => signatur(x) === signatur(w)) === i)
 
-/** Streams (mit um den Wochenplan ergänzten Bereichen), dazu Bezugswege und Händler. Ohne Sprachbeleg: "Weitere Anbieter". */
+/** Streams (Bereiche um Wochenplan und Kanal-Bestand ergänzt), dazu Bezugswege und Händler. Ohne Sprachbeleg: "Weitere Anbieter". */
 export function wegZeilen(ctx) {
-  const mitTermin = titelMitTerminBereichen(ctx.titel, ctx.jetzt)
-  return [...ohneDoppel(mitTermin.streams).map((s) => streamZeile(s, ctx)), ...bezugZeilen(ctx.titel)]
+  const { streams } = titelMitTerminBereichen(ctx.titel, ctx.jetzt)
+  return [...ohneDoppel(streams).map((s) => streamZeile(s, { ...ctx, streams })), ...bezugZeilen(ctx.titel)]
 }
 
 /** Die Wege nach Gruppe; die Überschrift steht, wo es etwas zu trennen gibt oder wo es Geld kostet. */

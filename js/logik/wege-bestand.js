@@ -1,7 +1,8 @@
-// Was ein Anbieter schon geliefert hat, ob die deutsche Fassung abgeschlossen ist, und die um den Wochenplan ergänzten Bereiche (folgen-spanne.ts, stream-bereiche.ts der Hauptseite).
+// Was ein Anbieter schon geliefert hat, ob die deutsche Fassung abgeschlossen ist, und die um Wochenplan und Kanal-Bestand ergänzten Bereiche (folgen-spanne.ts, stream-bereiche.ts, prime-kanal.ts der Hauptseite).
 import { istErschienen } from './erschienen.js'
 import { addiereTage } from './zeit.js'
 import { folgenVon } from './dub.js'
+import { zaehleErschienen } from './antwort-regeln.js'
 
 const spanne = (von, bis) => (von === bis ? String(von) : `${von}–${bis}`)
 
@@ -40,7 +41,7 @@ export function deutschAbgeschlossen(titel, ctx) {
   return japan && !wochenplanLaeuft(ctx)
 }
 
-export const laufendBei = (titel, platform, ctx) => titel.plaene.some((p) => p.platform === platform && p.releaseType === 'weekly' && laeuftGerade(p, ctx))
+export const laufendBei = (titel, platform, ctx) => ((r) => r?.releaseType === 'weekly' && laeuftGerade(r, ctx))(titel.plaene.find((p) => p.platform === platform))
 
 
 export function ergaenzteFolgen(bereiche, plattform, { titel, jetzt }) {
@@ -72,7 +73,47 @@ function wegMitTermin(weg, ctx) {
   return neu.length && weg.dubRanges ? { ...weg, dubRanges: bereicheMitFolgen(weg.dubRanges, neu), ergaenzteFolgen: neu } : weg
 }
 
+const KANAL = { crunchyroll: 'crunchyroll', adn: 'adn' }
+
+// Der Weg des Anbieters, dessen deutsches Ja ein Prime-Kanal erbt ("Prime Video über Crunchyroll").
+const kanalQuelle = (s, streams) => (s.platform === 'primevideo' && s.dub === true ? streams.find((q) => q.platform === KANAL[(s.kanal ?? '').toLowerCase()] && q.dub === true) : undefined)
+
+/** Ein Prime-Kanal-Weg ohne eigene Bereiche zählt wie der Anbieter, dessen Bestand er führt. */
+export const zaehlPlattform = (s, streams) => (s.dubRanges?.some((r) => r.dub) ? undefined : kanalQuelle(s, streams))?.platform ?? s.platform
+
+function vereinigeDeutsch(eigene, quelle) {
+  const deutsch = []
+  for (const b of [...eigene, ...quelle].filter((x) => x.dub).sort((a, c) => a.from - c.from)) {
+    const letzter = deutsch.at(-1)
+    if (letzter && b.from <= letzter.to + 1) letzter.to = Math.max(letzter.to, b.to)
+    else deutsch.push({ from: b.from, to: b.to, dub: true })
+  }
+  const ohneTon = quelle.filter((x) => !x.dub && !deutsch.some((d) => d.from <= x.to && x.from <= d.to))
+  return [...deutsch, ...ohneTon].sort((a, c) => a.from - c.from)
+}
+
+function quelleBereiche(quelle, { titel, jetzt }) {
+  if (quelle.dubRanges?.some((b) => b.dub)) return quelle.dubRanges
+  const wochen = new Set(titel.plaene.filter((p) => p.platform === quelle.platform && p.releaseType === 'weekly').map((p) => p.slug))
+  const erschienen = zaehleErschienen(titel.termine.filter((e) => wochen.has(e.releaseSlug)), jetzt)
+  return erschienen ? [{ from: 1, to: erschienen, dub: true }] : []
+}
+
+function mitKanalBestand(streams, ctx) {
+  return streams.map((s) => {
+    const quelle = kanalQuelle(s, streams)
+    if (!quelle || !s.dubRanges?.length) return s
+    const vom = quelleBereiche(quelle, ctx)
+    const gemeinsam = vereinigeDeutsch(s.dubRanges, vom)
+    const wieAnbieter = !quelle.dubRanges?.some((b) => b.dub) && (!vom.length || JSON.stringify(gemeinsam) === JSON.stringify(vom))
+    return { ...s, dubRanges: wieAnbieter ? undefined : gemeinsam }
+  })
+}
+
+/** Der Titel mit Wegen, deren Bereiche um den Wochenplan und den Bestand des Kanal-Anbieters ergänzt sind. */
 export function titelMitTerminBereichen(titel, jetzt) {
-  if (!titel.streams.length || !titel.plaene.some((p) => p.releaseType === 'weekly')) return titel
-  return { ...titel, streams: titel.streams.map((s) => wegMitTermin(s, { titel, jetzt })) }
+  if (!titel.streams.length) return titel
+  const ctx = { titel, jetzt }
+  const mitTermin = titel.plaene.some((p) => p.releaseType === 'weekly') ? titel.streams.map((s) => wegMitTermin(s, ctx)) : titel.streams
+  return { ...titel, streams: mitKanalBestand(mitTermin, ctx) }
 }

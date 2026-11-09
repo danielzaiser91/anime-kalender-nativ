@@ -58,15 +58,15 @@ function teilweise(a) {
   return { haupt, neben: a.restBelegt ? '' : 'Übrige Folgen: nicht auf Deutsch belegt' }
 }
 
-const filmDeSatz = (teil, was) => (teil ? `${teil.raus ? 'Seit' : 'Ab'} ${datumKurz(teil.datum)} ${was}` : undefined)
+const satz = (t, was) => `${t.raus ? 'Seit' : 'Ab'} ${datumKurz(t.datum)} ${was}`
 
-function filmDe(a) {
-  const kino = filmDeSatz(a.kino, 'im Kino')
-  const stream = filmDeSatz(a.stream, a.stream ? `bei ${a.stream.anbieter}` : '')
-  if (a.kino && a.stream && a.kino.datum === a.stream.datum) return { haupt: `${a.kino.raus ? 'Seit' : 'Ab'} ${datumKurz(a.kino.datum)} im Kino und bei ${a.stream.anbieter}`, neben: '' }
-  const streamZuerst = a.stream && (!a.kino || (a.kino.raus && !a.stream.raus) || (a.kino.raus === a.stream.raus && (a.kino.raus ? a.stream.datum > a.kino.datum : a.stream.datum < a.kino.datum)))
-  const anderer = streamZuerst ? kino : (stream ?? (a.streamWege ? undefined : 'Streamstart noch nicht bekannt'))
-  return { haupt: (streamZuerst ? stream : kino) ?? '', neben: anderer ?? '' }
+// Kino und Stream eines Films: der nächste Termin zuerst (liegen beide zurück, der jüngere), der andere daneben.
+function filmDe({ kino, stream, streamWege }) {
+  if (kino && stream && kino.datum === stream.datum) return { haupt: satz(kino, `im Kino und bei ${stream.anbieter}`), neben: '' }
+  const k = kino && satz(kino, 'im Kino')
+  const s = stream && satz(stream, `bei ${stream.anbieter}`)
+  const streamZuerst = stream && (!kino || (kino.raus && !stream.raus) || (kino.raus === stream.raus && (kino.raus ? stream.datum > kino.datum : stream.datum < kino.datum)))
+  return streamZuerst ? { haupt: s, neben: k ?? '' } : { haupt: k ?? '', neben: s ?? (streamWege ? '' : 'Streamstart noch nicht bekannt') }
 }
 
 const film = (a) => ({ haupt: a.hatSynchro ? 'Auf Deutsch verfügbar' : 'Noch keine deutsche Fassung', neben: !a.hatSynchro && a.ohneWeg ? 'Kein deutscher Anbieter führt ihn bisher' : '' })

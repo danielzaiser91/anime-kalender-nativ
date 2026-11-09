@@ -15,23 +15,6 @@ export function zusammengefasst(bereiche) {
   return raus
 }
 
-export function dubGrenze(bereiche) {
-  if (!bereiche?.length) return null
-  const sortiert = [...bereiche].sort(nachAnfang)
-  const deutsch = sortiert.filter((r) => r.dub)
-  if (!deutsch.length || deutsch.length === sortiert.length) return null
-  const wechsel = sortiert.filter((r, i) => i > 0 && r.dub !== sortiert[i - 1].dub).length
-  if (wechsel > 1) return null
-  return sortiert[0].dub ? { art: 'bis', n: deutsch[0].to } : { art: 'ab', n: deutsch[0].from }
-}
-
-export function dubLuecken(bereiche) {
-  if (!bereiche?.length) return null
-  const ohne = bereiche.filter((r) => !r.dub)
-  if (!ohne.length || ohne.length === bereiche.length) return null
-  return bereicheKurz(ohne)
-}
-
 export const zaehltDurchgehend = (bereiche, gesamt) => Boolean(gesamt) && Boolean(bereiche?.some((r) => r.to > gesamt))
 
 function fehlende(erfasst, gesamt) {
