@@ -8,7 +8,7 @@ const WEG = ['platform', 'url', 'zugang', 'dub', 'dubRanges', 'dubAbgeleitet', '
 const KAUFWEG = ['name', 'url', 'kind', 'zugang', 'dubRanges', 'dubAbgeleitet', 'ueberTmdb']
 const PLAN = ['slug', 'name', 'publisher', 'sprache', 'platform', 'releaseType', 'automatisch', 'tvLetzteSichtung', 'sender']
 const SCHEDULE = ['firstEpisodeDate', 'lastEpisodeDate', 'episodeCount', 'episodeCountAssumed', 'episodeCountNurGesichtet', 'firstEpisodeNumber', 'wochentage']
-const ECKDATEN = ['format', 'episodes', 'jpYear', 'jpSeason', 'jpEnd', 'fsk', 'runtimeMin', 'genres', 'studios', 'hasVoices', 'deErstausgabe', 'dubConfidence', 'einzelquelle', 'ankuendigung']
+const ECKDATEN = ['format', 'episodes', 'jpYear', 'jpSeason', 'jpStart', 'jpStatus', 'jpEnd', 'fsk', 'runtimeMin', 'genres', 'studios', 'hasVoices', 'deErstausgabe', 'dubConfidence', 'einzelquelle', 'ankuendigung']
 
 const nur = (quelle, felder) => Object.fromEntries(felder.filter((f) => quelle?.[f] !== undefined).map((f) => [f, quelle[f]]))
 
@@ -21,7 +21,7 @@ const mitSicherenAdressen = (weg) => Object.fromEntries(Object.entries(weg).filt
 
 const plan = (release) => ({ ...nur(release, PLAN), ...nur(release.schedule, SCHEDULE) })
 
-function baustein(titel, ak, { termine, plaene }) {
+function baustein(titel, ak, { termine, plaene, merkmal }) {
   return {
     id: titel.id,
     ak,
@@ -33,11 +33,12 @@ function baustein(titel, ak, { termine, plaene }) {
     kaufwege: (titel.watchLinks ?? []).map((w) => mitSicherenAdressen(nur(w, KAUFWEG))),
     termine: termine.map((e) => ({ releaseSlug: e.releaseSlug, ...kuerzeTermin(e) })),
     plaene: plaene.map(plan),
+    ...merkmal,
   }
 }
 
 /** Alle Titel von `titles.json`, nach Gruppe der Kennung geteilt: Map Gruppe → Dateiinhalt. */
-export function baueTitelGruppen({ titelVoll, events, releases, kennungen }) {
+export function baueTitelGruppen({ titelVoll, events, releases, kennungen }, merkmale) {
   const ak = new Map(kennungen.titel.map((z) => [z[1], z[3] ?? z[0]]))
   const termine = Map.groupBy(events, (e) => e.titleId)
   const plaene = Map.groupBy(releases, (r) => r.titleId)
@@ -47,7 +48,7 @@ export function baueTitelGruppen({ titelVoll, events, releases, kennungen }) {
     if (!kennung) continue
     const gruppe = gruppeVonAk(kennung)
     const datei = gruppen.get(gruppe) ?? { schema: TITEL_SCHEMA, gruppe, titel: {} }
-    datei.titel[kennung] = baustein(titel, kennung, { termine: termine.get(titel.id) ?? [], plaene: plaene.get(titel.id) ?? [] })
+    datei.titel[kennung] = baustein(titel, kennung, { termine: termine.get(titel.id) ?? [], plaene: plaene.get(titel.id) ?? [], merkmal: merkmale.get(titel.id) })
     gruppen.set(gruppe, datei)
   }
   return gruppen
