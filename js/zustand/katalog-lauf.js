@@ -13,16 +13,21 @@ async function ladeSprecherIds(lader, namen) {
   return new Map(namen.map((name) => [name, nachName[name] ?? []]))
 }
 
-/** Weitere Namen (Originalschrift, Synonyme) und Sprecher-Index nachladen; ohne sie bleibt die Suche auf den Katalognamen. */
+const setzeKatalog = (store, teil) => store.setze({ katalog: { ...store.lies().katalog, ...teil } })
+
+/**
+ * Weitere Namen (Originalschrift, Synonyme) und Sprecher-Index nachladen. `weitere` ist 'laedt', true oder 'fehler' (dann bleibt die Suche
+ * auf den Katalognamen, die Seite sagt es); ein zweiter Aufruf stößt nichts neu an, auch nicht nach einem Fehler.
+ */
 async function ladeNachtraege({ store, lader }) {
   if (store.lies().katalog.weitere) return
+  setzeKatalog(store, { weitere: 'laedt' })
   try {
     const [synonyme, sprecher] = await Promise.all([lader.ladeSynonyme(), lader.ladeSprecherIndex()])
-    const katalog = store.lies().katalog
-    const titel = katalog.titel.map((t) => ({ ...t, weitere: synonyme.namen[t.id] ?? [] }))
-    store.setze({ katalog: { ...katalog, titel, weitere: true, sprecherNamen: sprecher.sprecher.map((eintrag) => eintrag[0]) } })
+    const titel = store.lies().katalog.titel.map((t) => ({ ...t, weitere: synonyme.namen[t.id] ?? [] }))
+    setzeKatalog(store, { titel, weitere: true, sprecherNamen: sprecher.sprecher.map((eintrag) => eintrag[0]) })
   } catch {
-    // Fehlen die Nachträge, gilt die Suche über die Katalognamen weiter.
+    setzeKatalog(store, { weitere: 'fehler' })
   }
 }
 

@@ -4,7 +4,7 @@ import { FESTE_WERTE, istZahlenListe, leererFilter, LISTEN, SCHNELL_FELDER } fro
 
 function leseListe(abfrage, name, liste) {
   const roh = abfrage.getAll(name).join(',').split(',').filter(Boolean)
-  const werte = istZahlenListe(liste) ? roh.map(Number).filter(Number.isInteger) : roh
+  const werte = [...new Set(istZahlenListe(liste) ? roh.map(Number).filter(Number.isInteger) : roh)]
   return FESTE_WERTE[liste] ? werte.filter((w) => FESTE_WERTE[liste].includes(w)) : werte
 }
 
