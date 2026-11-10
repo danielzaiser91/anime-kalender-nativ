@@ -22,7 +22,7 @@ function zeigeFehler(dialog) {
 const stempel =(panel) => `${panel.ak}|${panel.status}`
 
 export async function aktualisierePanel(dialog, abhaengigkeiten) {
-  const { store } = abhaengigkeiten
+  const { store, lader } = abhaengigkeiten
   const { panel } = store.lies()
   if (!panel) {
     delete dialog.dataset.zeigt
@@ -34,7 +34,8 @@ export async function aktualisierePanel(dialog, abhaengigkeiten) {
   verdrahte(dialog, abhaengigkeiten)
   try {
     const { zeigePanel } = await import('./panel/panel.js')
-    await zeigePanel(dialog, { lies: store.lies, schliessen: () => dialog.close() })
+    if (dialog.dataset.zeigt !== stempel(panel)) return // eine neuere Anforderung zeichnet; sonst entstünde jeder Baustein zweimal
+    await zeigePanel(dialog, { lies: store.lies, schliessen: () => dialog.close(), lader })
   } catch {
     delete dialog.dataset.zeigt
     zeigeFehler(dialog)

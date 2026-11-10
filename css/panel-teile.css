@@ -1,0 +1,363 @@
+/* Bausteine unter der Bühne des Panels (Handlung, Folgen, Disc, Reihe, Besetzung, Ähnliche, Quellen); wird erst beim Öffnen eines Titels geholt. */
+.panel-lazy[hidden] {
+  display: none;
+}
+
+.panel-lazy-fehler {
+  margin: 0 var(--abstand);
+}
+
+.aufklapper > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  cursor: pointer;
+  border-bottom: 2px solid var(--rand);
+}
+
+.aufklapp-inhalt {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+.aufklapp-inhalt p {
+  margin: 0;
+}
+
+.handlung-text {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.handlung-hinweis {
+  margin: 0;
+  color: var(--akzent-text);
+  font-size: 0.875rem;
+}
+
+.handlung-fuss {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.handlung-quelle {
+  color: var(--leise);
+  font-size: 0.875rem;
+}
+
+.handlung-quelle a,
+.disc-links a,
+.quellen a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.besetzung {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+}
+
+.besetzung dt {
+  color: var(--leise);
+}
+
+.besetzung dt,
+.besetzung dd {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folgen-pakete {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.folgen-paket {
+  min-width: 44px;
+  padding: 0 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.folgen-paket[aria-pressed='true'] {
+  border-color: var(--akzent);
+  background: var(--flaeche);
+}
+
+.folgen-liste,
+.disc-liste,
+.reihe-liste,
+.aehnlich-liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.folgen-liste {
+  max-height: 16rem;
+  overflow-y: auto;
+}
+
+.folge {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.125rem 0;
+}
+
+.folge-nr {
+  flex: none;
+  width: 2.25rem;
+  color: var(--leise);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.folge-titel {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folge-min {
+  flex: none;
+  color: var(--leise);
+  font-variant-numeric: tabular-nums;
+}
+
+.folge-marke,
+.reihe-marke {
+  flex: none;
+  padding: 0 0.375rem;
+  border: 1px solid var(--rand);
+  border-radius: 0.25rem;
+  color: var(--leise);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.folge-de {
+  border-color: #1b7f4b;
+  color: #1b7f4b;
+}
+
+.folge-nein,
+.reihe-marke.ohne {
+  border-color: #b3261e;
+  color: #b3261e;
+}
+
+.disc-gruppe > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.disc-zeile {
+  display: grid;
+  gap: 0.125rem 0.75rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--rand);
+}
+
+.disc-name {
+  font-weight: 700;
+}
+
+.disc-daten,
+.disc-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
+.disc-datum {
+  font-variant-numeric: tabular-nums;
+}
+
+.disc-datum.kommend {
+  color: var(--akzent-text);
+  font-weight: 700;
+}
+
+.reihe-gruppe {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.reihe-teil > a,
+.reihe-teil:not(:has(> a)) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.reihe-teil > a:hover {
+  background: var(--flaeche-2);
+}
+
+.reihe-teil.aktuell {
+  border-left: 4px solid var(--akzent);
+  background: var(--flaeche-2);
+}
+
+.reihe-cover {
+  flex: none;
+  width: 36px;
+  height: 54px;
+  border-radius: 0.25rem;
+  object-fit: cover;
+  background: var(--flaeche-2);
+}
+
+.reihe-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.reihe-name {
+  overflow-wrap: anywhere;
+}
+
+.reihe-marke.geplant {
+  border-color: #1d4ed8;
+  color: #1d4ed8;
+}
+
+.reihe-ohne > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--leise);
+  cursor: pointer;
+}
+
+.aehnlich-liste {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.375rem;
+}
+
+.aehnlich-kachel {
+  display: flex;
+  gap: 0.5rem;
+  min-height: 9rem;
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.aehnlich-kachel:hover {
+  background: var(--flaeche-2);
+}
+
+.aehnlich-cover {
+  flex: none;
+  align-self: start;
+  width: 88px;
+  height: 132px;
+  border-radius: 0.375rem;
+  object-fit: cover;
+  background: var(--flaeche-2);
+}
+
+.aehnlich-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.aehnlich-name {
+  display: -webkit-box;
+  overflow: hidden;
+  font-weight: 700;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.merkmale {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.merkmal {
+  padding: 0 0.375rem;
+  border-radius: 0.25rem;
+  background: var(--flaeche-2);
+  font-size: 0.75rem;
+}
+
+.merkmal.genre {
+  border: 1px solid var(--akzent);
+  font-weight: 700;
+}
+
+.quellen {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.quellen th,
+.quellen td {
+  padding: 0.25rem 0.5rem 0.25rem 0;
+  border-top: 1px solid var(--rand);
+  text-align: left;
+  vertical-align: top;
+}
+
+@media (prefers-color-scheme: dark) {
+  .folge-de {
+    border-color: #4ade80;
+    color: #4ade80;
+  }
+
+  .folge-nein,
+  .reihe-marke.ohne {
+    border-color: #f87171;
+    color: #f87171;
+  }
+
+  .reihe-marke.geplant {
+    border-color: #93b4ff;
+    color: #93b4ff;
+  }
+}
+
+@media (max-width: 30rem) {
+  .aehnlich-kachel {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .aehnlich-cover {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+  }
+}

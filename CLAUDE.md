@@ -2,7 +2,7 @@
 
 Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben Daten (Animation mit deutscher Synchronfassung), aber
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
-bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel, Favoriten, Gesehen, ICS-Export, Suche und Filter.
+bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel (samt Handlung, Besetzung, Folgentiteln, Disc, Reihe, ähnlichen Titeln und Quellen), Favoriten, Gesehen, ICS-Export, Suche und Filter, News, Saison, Kalender-Abo.
 
 ## Harte Grenzen
 
@@ -49,14 +49,14 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 index.html            Hülle mit Lade-Hinweis und noscript
 css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css, suche.css; seiten.css (News, Saison, Abo, lazy)
 js/main.js            Verdrahtung, höchstens 60 Zeilen
-js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>); speicher.js (localStorage von außen übergeben)
-js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabelle für beide Ansichten), Merken, ICS, Suche (suche*.js) und Filter (filter*.js, katalog.js); Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
+js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>; je Titel handlung/ besetzung/ folgen/ disc/ aehnlich/<Kennung>, je Reihe reihe/<Reihe>); speicher.js (localStorage von außen übergeben)
+js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabelle für beide Ansichten), Merken, ICS, Suche (suche*.js) und Filter (filter*.js, katalog.js); Panel: antwort*.js, wege*.js, dub.js, handlung.js, folgen-liste.js, disc-*.js, reihe.js, start.js nach shared/ und web/src/components/detail der Hauptseite)
 js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel), katalog-lauf.js (lädt die Suche), merk.js (Favoriten, Gesehen, Wahlen ändern und speichern)
 js/ui/dom.js          h()
 js/ui/zeichnen.js     zeichnet die Ansicht (Monat lazy), hält den Fokus über das Neuzeichnen; ui/aktionen.js: Klicks (data-aktion) und Formulare (data-absenden: Datum-Sprung, Suche)
 js/ui/bausteine/      kleine Teile (Kachel, Leiste, Ansichten-Navigation, Zeitkopf, Schalter, Seitenrahmen, Suchformular, Filterleiste, Trefferliste, News-Eintrag, Saison-Karte)
 js/ui/seiten/         eine Datei je Ansicht
-js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
+js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten); darunter je ein eigenes Modul pro Baustein (handlung, folgen, disc, reihe, besetzung, aehnlich, quellen), das bausteine-tor.js erst holt, wenn der Titel es braucht (Merkmal `hat` im Titelbaustein)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
 tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel (außer esbuild in `bauen.sh`, Punkt 1)
 .github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
@@ -68,7 +68,7 @@ Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken) und Pan
 Antwort-Kasten, Wege nach Zugang mit Folgenbereichen und Lücken, Termine, Eckdaten. Die Panel-Logik ist aus der Hauptseite portiert und
 gegen deren Funktionen an allen Titeln gemessen. Nicht im Panel: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine,
 Disc-Bände, ausgebliebene Folgen und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
-Handlung, Besetzung, Folgentitel, Disc-Ausgaben, Reihen, Merken.
+Merken.
 
 Schritt 3: Monatsansicht (`#/monat/<JJJJ-MM>`, Raster Montag bis Sonntag, schmal eine Liste der Tage mit Terminen; gleiche Termine wie die Woche,
 Panel darüber), Datum-Sprung (`<input type="date">` in der Leiste, springt in der gerade gezeigten Ansicht), Favoriten (je Titel) und
@@ -100,6 +100,17 @@ und `saison-ausblick.ts` nachgebaut; Serien sind wie auf der Hauptseite die Kern
 unverändert (Quelle: `public/data/feeds`), `data/feeds.json` führt Namen und Terminzahl je Feed; "Abonnieren" ist ein `webcal://`-Link auf dieselbe Adresse. Abweichungen: Nachtrag-Abschnitte
 (`abschnitte`) einer Meldung fehlen, der Vermerk (`hinweis`) steht; News-Titel ohne Panel-Baustein sind nicht verlinkt; Ecchi-Titel außerhalb des Kerns bleiben in den News verborgen
 (die Hauptseite zeigt sie dort, weil sie nur geladene Titel prüft).
+
+Schritt 6: Panel-Rest. Unter den Eckdaten stehen sieben Bausteine, je ein eigenes Modul (`ui/panel/<Name>.js`), die `bausteine-tor.js` erst holt, wenn der Titelbaustein es verlangt
+(`hat`: h Handlung, b Besetzung, f Folgentitel, d Disc, a Ähnliche; `reihe` = Kennung der Reihe; `quellen` steht schon im Baustein) und deren Stil `css/panel-teile.css` mit dem ersten kommt.
+Daten je Titel eine kleine Datei `data/<handlung|besetzung|folgen|disc|aehnlich>/<Kennung>.json`, je Reihe `data/reihe/<Reihe>.json` (aus `franchises.json` und den Titeln, Eintrag der Reihe gewinnt);
+Besetzung und Folgen öffnen erst auf Klick. Beim Bau entstehen: die Wahl der Handlung (deutsch, sonst englisch von AniList, sonst die des letzten früheren Teils der Reihe, Staffel vor Film;
+`tools/verdichten/handlung.js`), die fünf ähnlichen Titel je Titel (`aehnlich.js`, Rechnung wie `shared/aehnlich.ts`, an allen 2.877 Titeln mit der Hauptseite gleich) und die Quellenzeilen
+(`quellen.js`, wie `Quellenuebersicht.tsx`); die Seite rechnet nur, was vom Tag abhängt (Hinweis "Noch nicht erschienen", Geplant-Marke, "kommend"). Logik aus der Hauptseite: `logik/handlung.js`, `folgen-liste.js`,
+`disc-ausgaben.js` und `disc-varianten.js` (Ausgaben nach Art gruppiert), `reihe.js` (Hauptstaffeln, Gruppen, Namen, Zeile), `start.js` (`erscheintErst`). Ecchi folgt dem Schalter (Reihenteile, Vorschläge).
+Abweichungen: Reihenliste als Liste (kein Karussell), ohne Suche und ohne Staffelnummern aus `staffelStaende` ("Staffel n von m" fehlt, Teilnamen nur ohne Reihennamen gekürzt); Genres der Vorschläge
+in der Sprache der Daten (englisch, wie die Eckdaten); Disc-Zeilen zeigen Shop und Quelle gleich statt erst nach dem Antippen, kein Kalendereintrag für Disc-Termine; kein Schlagworte-Abschnitt,
+keine Neuigkeiten zum Titel, keine Beleg-Bilder (Worker); `deFolgen` der Handlung (2 Titel) fehlt; Besetzung nur mit Rollen oder ANN-Adresse (alle 2.511 Titel mit `hasVoices` haben beides oder eins; gemessen am Datenstand 10.11.2026).
 
 ## Oberfläche
 
