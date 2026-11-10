@@ -54,7 +54,7 @@ js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabe
 js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel), katalog-lauf.js (lädt die Suche), merk.js (Favoriten, Gesehen, Wahlen ändern und speichern)
 js/ui/dom.js          h()
 js/ui/zeichnen.js     zeichnet die Ansicht (Monat lazy), hält den Fokus über das Neuzeichnen; ui/aktionen.js: Klicks (data-aktion) und Formulare (data-absenden: Datum-Sprung, Suche)
-js/ui/bausteine/      kleine Teile (Kachel, Leiste, Zeitkopf, Schalter, Seitenrahmen, Suchformular, Filterleiste, Trefferliste)
+js/ui/bausteine/      kleine Teile (Kachel, Leiste, Ansichten-Navigation, Zeitkopf, Schalter, Seitenrahmen, Suchformular, Filterleiste, Trefferliste)
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
