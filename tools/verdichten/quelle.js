@@ -19,13 +19,14 @@ function pruefeTermin(termin, i) {
   if (typeof termin.name !== 'string' || !termin.name) throw fehler('name fehlt')
 }
 
-function pruefeMengen({ events, titel, titelVoll, releases, kennungen, meta }) {
+function pruefeMengen({ events, titel, titelVoll, releases, kennungen, meta, saison, ausblick }) {
   if (!Array.isArray(titelVoll) || titelVoll.length < MIN_TITEL_VOLL) throw new Error(`titles.json: ${titelVoll?.length} Titel, erwartet mindestens ${MIN_TITEL_VOLL}`)
   if (!Array.isArray(releases) || releases.length < MIN_RELEASES) throw new Error(`releases.json: ${releases?.length} Releases, erwartet mindestens ${MIN_RELEASES}`)
   if (!Array.isArray(events) || events.length < MIN_TERMINE) throw new Error(`events.json: ${events?.length} Termine, erwartet mindestens ${MIN_TERMINE}`)
   if (!Array.isArray(titel) || titel.length < MIN_TITEL) throw new Error(`titles-core.json: ${titel?.length} Titel, erwartet mindestens ${MIN_TITEL}`)
   if (!Array.isArray(kennungen.titel) || kennungen.titel.length < MIN_KENNUNGEN) throw new Error('kennungen.json: zu wenige Zeilen')
   if (Number.isNaN(Date.parse(meta.generatedAt))) throw new Error('meta.json: generatedAt fehlt')
+  if (!Array.isArray(saison?.katalog) || !Array.isArray(ausblick?.katalog) || typeof saison.jp !== 'object') throw new Error('saison.json / saison-ausblick.json: Form unerwartet')
 }
 
 export function ladeQuelle(wurzel) {
@@ -37,6 +38,9 @@ export function ladeQuelle(wurzel) {
     synonyme: lies(wurzel, 'public/data/synonyme.json'),
     kennungen: lies(wurzel, 'data/kennungen.json'),
     meta: lies(wurzel, 'public/data/meta.json'),
+    news: lies(wurzel, 'public/data/news.json'),
+    saison: lies(wurzel, 'public/data/saison.json'),
+    ausblick: lies(wurzel, 'public/data/saison-ausblick.json'),
   }
   pruefeMengen(quelle)
   quelle.events.forEach(pruefeTermin)

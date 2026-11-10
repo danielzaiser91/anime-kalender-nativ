@@ -1,0 +1,199 @@
+/* News, Saison und Abo: kommt erst mit der ersten dieser Ansichten (js/ui/css-laden.js). Nutzt die Karten und Wahl-Links der Woche und der Suche. */
+.seiten-titel {
+  margin-top: 1.25rem;
+}
+
+.seitenkopf p,
+.hinweis-zeile {
+  margin: 0.25rem 0 0;
+  color: var(--leise);
+  font-size: 0.875rem;
+}
+
+.nachrichten {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+}
+
+.nachrichten > li {
+  padding: 0.25rem 0;
+}
+
+.nachricht-zeile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem 0.5rem;
+  align-items: baseline;
+  font-size: 0.875rem;
+}
+
+.art,
+.teil {
+  padding: 0 0.375rem;
+  border: 1px solid var(--rand);
+  border-radius: 0.375rem;
+  background: var(--flaeche);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.teil {
+  color: var(--leise);
+  font-weight: 400;
+}
+
+.satz {
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.durchgestrichen {
+  color: var(--leise);
+  text-decoration: line-through;
+}
+
+.abgeloest,
+.quellen {
+  color: var(--leise);
+  font-size: 0.75rem;
+}
+
+.nachrichten .hinweis {
+  margin: 0.125rem 0 0;
+  font-size: 0.75rem;
+}
+
+.gleich summary,
+.gruppe summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.aeltere {
+  margin: var(--abstand) 0;
+  text-decoration: none;
+}
+
+.stufe {
+  font-weight: 700;
+}
+
+.text .stufe-auf-deutsch,
+.text .stufe-bestaetigt {
+  color: var(--akzent-text);
+}
+
+.kachel.kommt .cover,
+.cover.noch {
+  opacity: 0.6;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.chip {
+  padding: 0 0.375rem;
+  border: 1px solid var(--rand);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.chip.laut {
+  border-style: dashed;
+}
+
+.chips .hinweis {
+  flex-basis: 100%;
+  color: var(--leise);
+  font-size: 0.75rem;
+}
+
+.nur-namen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.feeds {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.feed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--rand);
+}
+
+.feed-name {
+  flex: 1 1 100%;
+  font-weight: 600;
+}
+
+.feed-zahl {
+  margin-left: 0.5rem;
+  color: var(--leise);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.schalter {
+  text-decoration: none;
+}
+
+.verlauf {
+  margin: 0.25rem 0 0 0.5rem;
+  padding: 0 0 0 0.75rem;
+  border-left: 2px solid var(--rand);
+  list-style: none;
+  color: var(--leise);
+  font-size: 0.75rem;
+}
+
+.verlauf li {
+  padding: 0.125rem 0;
+}
+
+.verlauf-tag,
+.verlauf .durchgestrichen {
+  display: block;
+}
+
+.saisonseite .tag h2 {
+  text-transform: none;
+}
+
+@media (min-width: 40rem) {
+  .feed-name {
+    flex-basis: 10rem;
+  }
+}
+
+.gleich summary::before,
+.gruppe summary::before {
+  content: '▸';
+  margin-right: 0.5rem;
+}
+
+.gleich[open] summary::before,
+.gruppe[open] summary::before {
+  content: '▾';
+}

@@ -47,14 +47,14 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 
 ```
 index.html            Hülle mit Lade-Hinweis und noscript
-css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css, suche.css
+css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css, suche.css; seiten.css (News, Saison, Abo, lazy)
 js/main.js            Verdrahtung, höchstens 60 Zeilen
 js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>); speicher.js (localStorage von außen übergeben)
 js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabelle für beide Ansichten), Merken, ICS, Suche (suche*.js) und Filter (filter*.js, katalog.js); Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
 js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel), katalog-lauf.js (lädt die Suche), merk.js (Favoriten, Gesehen, Wahlen ändern und speichern)
 js/ui/dom.js          h()
 js/ui/zeichnen.js     zeichnet die Ansicht (Monat lazy), hält den Fokus über das Neuzeichnen; ui/aktionen.js: Klicks (data-aktion) und Formulare (data-absenden: Datum-Sprung, Suche)
-js/ui/bausteine/      kleine Teile (Kachel, Leiste, Ansichten-Navigation, Zeitkopf, Schalter, Seitenrahmen, Suchformular, Filterleiste, Trefferliste)
+js/ui/bausteine/      kleine Teile (Kachel, Leiste, Ansichten-Navigation, Zeitkopf, Schalter, Seitenrahmen, Suchformular, Filterleiste, Trefferliste, News-Eintrag, Saison-Karte)
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
@@ -89,6 +89,17 @@ der Zustand steht nur in der Adresse (Namen wie auf der Hauptseite: `p`, `anb`, 
 `f` = geöffnete Liste). Status, "kostenlos" und "verfügbar" gelten zum Datenstand und werden beim Bau gerechnet (`tools/verdichten/katalog-felder.js`). Abweichungen: Reihenfolge
 der Treffer einfacher (Rang, Abstand, Name statt der Fundstellen-Punkte), keine Und/Oder-Umschaltung je Liste, keine Mindest-Vertrauensstufe; "bestätigt" und "Zweitanbieter"
 wirken auf Termine und kommen mit dem Filter des Kalenders.
+
+Schritt 5: News (`#/news`, Abfrage `art=<Art>` und `tage=<n>`), Saison (`#/saison`, Abfrage `r=zuletzt|ausblick`), Kalender-Abo (`#/abo`), alle drei lazy
+mit gemeinsamem `css/seiten.css`, das erst mit der ersten dieser Ansichten kommt (`ui/css-laden.js`). News: je Woche eine Datei `data/news/<Woche>.json` (Tage, Einträge je Titel,
+Meldungen mit fertigem Satz und Quellen; die Sätze entstehen beim Bau, `tools/verdichten/news-text.js` ist aus `news-text.ts` der Hauptseite nachgebaut und am RSS-Feed der Hauptseite
+gemessen), `data/news/index.json` nennt die Wochen. Vorn die letzten 14 Tage, Älteres in Schritten von 14 Tagen per Link; überholte Meldungen stehen als "Frühere Stände" unter der geltenden
+(`tools/verdichten/news-verlauf.js`), vier und mehr "auch bei …"-Meldungen eines Tages sind eingeklappt, Ecchi folgt dem Schalter aus den Einstellungen. Saison: `data/saison.json` trägt je Serie die Rohwerte
+(Japan-Start, erster deutscher Termin, Deutsch belegt oder angekündigt, Anbieter), Stufe, Gruppen und Ausblick rechnet die Seite mit dem heutigen Tag (`logik/saison-*.js`, aus `saison.ts`
+und `saison-ausblick.ts` nachgebaut; Serien sind wie auf der Hauptseite die Kerntitel, dazu der Katalog dahinter). Abo: `data/feeds/*.ics` und `data/feeds/news.xml` sind die Dateien der Hauptseite,
+unverändert (Quelle: `public/data/feeds`), `data/feeds.json` führt Namen und Terminzahl je Feed; "Abonnieren" ist ein `webcal://`-Link auf dieselbe Adresse. Abweichungen: Nachtrag-Abschnitte
+(`abschnitte`) einer Meldung fehlen, der Vermerk (`hinweis`) steht; News-Titel ohne Panel-Baustein sind nicht verlinkt; Ecchi-Titel außerhalb des Kerns bleiben in den News verborgen
+(die Hauptseite zeigt sie dort, weil sie nur geladene Titel prüft).
 
 ## Oberfläche
 
