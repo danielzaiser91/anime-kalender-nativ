@@ -3,11 +3,12 @@ import { heuteInBerlin, wocheVon } from '../logik/zeit.js'
 import { gruppeVonAk } from '../logik/titel.js'
 import { fuegeZusammen } from '../logik/woche.js'
 import { ORTE } from '../logik/ort.js'
-import { beobachteHash, leseHash } from './router.js'
+import { beobachteHash, leseHash, mitAbfrage } from './router.js'
 
 async function ladeAnsicht(abhaengigkeiten, ort) {
   const { lader } = abhaengigkeiten
   if (ort.art === 'suche') return (await import('./katalog-lauf.js')).ladeKatalogAnsicht(abhaengigkeiten, ort)
+  if (mitAbfrage(ort.art)) return (await import('./seiten-lauf.js')).ladeSeitenAnsicht(abhaengigkeiten, ort)
   const stand = await lader.ladeStand()
   const wochen = ORTE[ort.art].wochen(ort.schluessel).filter((woche) => woche >= stand.von && woche <= stand.bis)
   return { stand, daten: fuegeZusammen(await Promise.all(wochen.map(lader.ladeWoche))) }

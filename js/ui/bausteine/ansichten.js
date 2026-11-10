@@ -1,17 +1,20 @@
-// Die Navigation zwischen Woche, Monat und Suche: eine Stelle für Namen, Adressen und aria-current (Leiste und Suche benutzen sie gleich).
+// Die Navigation zwischen Woche, Monat, Suche, News, Saison und Abo: eine Stelle für Namen, Adressen und aria-current (Leiste und Suche benutzen sie gleich).
 import { h } from '../dom.js'
 import { hashFuerOrt } from '../../zustand/router.js'
 import { ORTE, schluesselBeider } from '../../logik/ort.js'
 
-const NAMEN = { woche: ORTE.woche.name, monat: ORTE.monat.name, suche: 'Suche' }
+const NAMEN = { woche: ORTE.woche.name, monat: ORTE.monat.name, suche: 'Suche', news: 'News', saison: 'Saison', abo: 'Abo' }
 
-/** Woche und Monat zeigen denselben Zeitpunkt wie die gerade gezeigte Ansicht (aus der Suche: heute); die Suche beginnt leer. */
+/** Woche und Monat zeigen denselben Zeitpunkt wie die gerade gezeigte Ansicht (aus den Ansichten ohne Zeit: heute); Suche, News, Saison und Abo beginnen leer. */
 function ziele({ ort, heute }) {
-  const beide = ort.art === 'suche' ? { woche: ORTE.woche.von(heute), monat: ORTE.monat.von(heute) } : schluesselBeider(ort, heute)
+  const beide = ORTE[ort.art] ? schluesselBeider(ort, heute) : { woche: ORTE.woche.von(heute), monat: ORTE.monat.von(heute) }
   return {
     woche: hashFuerOrt({ art: 'woche', schluessel: beide.woche }),
     monat: hashFuerOrt({ art: 'monat', schluessel: beide.monat }),
     suche: hashFuerOrt({ art: 'suche', schluessel: '' }),
+    news: hashFuerOrt({ art: 'news', schluessel: '' }),
+    saison: hashFuerOrt({ art: 'saison', schluessel: '' }),
+    abo: hashFuerOrt({ art: 'abo', schluessel: '' }),
   }
 }
 

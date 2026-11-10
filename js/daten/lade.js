@@ -17,6 +17,10 @@ export function erzeugeLader(holeFn) {
     ladeSynonyme: () => ladeJson('data/synonyme.json'),
     ladeSprecherIndex: () => ladeJson('data/sprecher.json'),
     ladeSprecherGruppe: (gruppe) => ladeJson(`data/sprecher/${gruppe}.json`),
+    ladeNewsIndex: () => ladeJson('data/news/index.json'),
+    ladeNewsWoche: (woche) => ladeJson(`data/news/${woche}.json`),
+    ladeSaison: () => ladeJson('data/saison.json'),
+    ladeFeeds: () => ladeJson('data/feeds.json'),
   }
 }
 

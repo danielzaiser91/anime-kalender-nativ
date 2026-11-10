@@ -2,6 +2,7 @@
 import { h } from '../dom.js'
 import { leiste } from './leiste.js'
 import { zeitkopf } from './zeitkopf.js'
+import { ansichten } from './ansichten.js'
 import { standText } from '../../logik/wochentext.js'
 
 export function fussnote(stand) {
@@ -19,4 +20,9 @@ export function ladeMeldung(zustand) {
 
 export function seitenrahmen(zustand, inhalt) {
   return h('div', { class: 'wochenseite', 'aria-busy': zustand.status === 'laedt' ? 'true' : 'false' }, leiste(zustand), zeitkopf(zustand), inhalt, fussnote(zustand.stand))
+}
+
+/** Rahmen der Ansichten ohne Zeitkopf (News, Saison, Abo): Leiste mit den Ansichten, Inhalt, Fußnote. */
+export function ansichtsrahmen(zustand, klasse, ...inhalt) {
+  return h('div', { class: `wochenseite ${klasse}`, 'aria-busy': zustand.status === 'laedt' ? 'true' : 'false' }, h('div', { class: 'leiste' }, ansichten(zustand)), inhalt, fussnote(zustand.stand))
 }
