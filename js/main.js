@@ -18,7 +18,7 @@ const lager = (() => {
   }
 })()
 const speicher = erzeugeSpeicher(lager)
-const store = erzeugeStore({ status: 'laedt', ort: null, heute: null, stand: null, daten: null, titel: null, panel: null, jetzt: null, merk: speicher.lies() })
+const store = erzeugeStore({ status: 'laedt', ort: null, heute: null, stand: null, daten: null, titel: null, panel: null, jetzt: null, katalog: null, merk: speicher.lies() })
 const lader = erzeugeLader((adresse) => fetch(adresse))
 
 store.abonniere(erzeugeZeichner({ wurzel, store, fenster: window }))

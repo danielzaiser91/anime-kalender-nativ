@@ -1,6 +1,6 @@
 // Budgets aus CLAUDE.md Punkt 7: Start = HTML + eingebundenes CSS + statisch importiertes JS + Startdaten (stand.json und die Woche von heute),
 // gzip, ohne Cover. Was erst per import() geladen wird, ist ein Baustein und zählt je Baustein zum Lazy-JS-Budget, nicht zum Start.
-import { readFileSync, readdirSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { dirname, join, relative } from 'node:path'
 import { gzipSync } from 'node:zlib'
 
@@ -65,6 +65,9 @@ function startCss(ausgabe) {
   return [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"/g)].map((m) => join(ausgabe, m[1]))
 }
 
+// Dateien, die erst beim Öffnen der Suche kommen: sie zählen nicht zum Start, ihre Größe steht aber in der Zeile.
+const LAZY_DATEIEN = ['katalog.json', 'synonyme.json', 'sprecher.json']
+
 /** Misst eine fertige Bauausgabe (_site); `woche` ist die Startwoche, deren Datei dazuzählt. */
 export function messeStart(ausgabe, woche) {
   const start = statischeModule(join(ausgabe, 'js', 'main.js'))
@@ -73,7 +76,8 @@ export function messeStart(ausgabe, woche) {
   const lazyJs = sammle(join(ausgabe, 'js'), '.js').filter((p) => !start.includes(p))
   const lazyCss = sammle(join(ausgabe, 'css'), '.css').filter((p) => !startCss(ausgabe).includes(p))
   const baustein = [...bausteine(start)].map(([ziel, module]) => ({ name: relative(join(ausgabe, 'js'), ziel).replaceAll('\\', '/'), bytes: summe(module) }))
-  return { code: summe(code), daten: summe(daten), gesamt: summe(code) + summe(daten), lazyJs: summe(lazyJs), lazyCss: summe(lazyCss), bausteine: baustein }
+  const lazyDaten = LAZY_DATEIEN.filter((name) => existsSync(join(ausgabe, 'data', name))).map((name) => ({ name, bytes: gz(join(ausgabe, 'data', name)) }))
+  return { code: summe(code), daten: summe(daten), gesamt: summe(code) + summe(daten), lazyJs: summe(lazyJs), lazyCss: summe(lazyCss), bausteine: baustein, lazyDaten }
 }
 
 const kb = (bytes) => (bytes / 1024).toFixed(1)
@@ -85,7 +89,8 @@ export function groessenText(m) {
   const gesamt = m.gesamt + m.lazyJs + m.lazyCss
   const ziel = ZIEL_START_BYTES + ZIEL_LAZY_JS_BYTES
   const liste = m.bausteine.map(bausteinText).join(', ')
-  return `Start ${zahl(m.gesamt, BUDGET_BYTES, ZIEL_START_BYTES)} gzip (Code ${kb(m.code)}, Daten ${kb(m.daten)}), Bausteine lazy JS (je Ziel ${ZIEL_LAZY_JS_BYTES / 1024}, hart ${LAZY_JS_BYTES / 1024} KB): ${liste}, CSS ${kb(m.lazyCss)} KB, Gesamt ${kb(gesamt)} KB${gesamt > ziel ? ' über Ziel' : ''}`
+  const dateien = (m.lazyDaten ?? []).map((d) => `${d.name} ${kb(d.bytes)}`).join(', ')
+  return `Start ${zahl(m.gesamt, BUDGET_BYTES, ZIEL_START_BYTES)} gzip (Code ${kb(m.code)}, Daten ${kb(m.daten)}), Bausteine lazy JS (je Ziel ${ZIEL_LAZY_JS_BYTES / 1024}, hart ${LAZY_JS_BYTES / 1024} KB): ${liste}, CSS ${kb(m.lazyCss)} KB, Gesamt ${kb(gesamt)} KB${gesamt > ziel ? ' über Ziel' : ''}${dateien ? `, Daten der Suche gzip: ${dateien} KB` : ''}`
 }
 
 export function pruefeBudget(messung) {

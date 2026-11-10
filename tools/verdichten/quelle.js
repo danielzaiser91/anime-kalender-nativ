@@ -34,6 +34,7 @@ export function ladeQuelle(wurzel) {
     titel: lies(wurzel, 'public/data/titles-core.json'),
     titelVoll: lies(wurzel, 'public/data/titles.json'),
     releases: lies(wurzel, 'public/data/releases.json'),
+    synonyme: lies(wurzel, 'public/data/synonyme.json'),
     kennungen: lies(wurzel, 'data/kennungen.json'),
     meta: lies(wurzel, 'public/data/meta.json'),
   }

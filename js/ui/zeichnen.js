@@ -1,4 +1,4 @@
-// Zeichnet die Ansicht in die Hülle; die Monatsansicht wird erst beim ersten Öffnen geladen. Der Fokus eines Knopfs überlebt das Neuzeichnen.
+// Zeichnet die Ansicht in die Hülle; Monat und Suche werden erst beim ersten Öffnen geladen. Der Fokus eines Knopfs überlebt das Neuzeichnen.
 import { h } from './dom.js'
 import { wochenseite } from './seiten/woche.js'
 import { sichtbareTermine } from '../logik/merken.js'
@@ -6,15 +6,17 @@ import { sichtbareTermine } from '../logik/merken.js'
 const SEITEN = {
   woche: async () => wochenseite,
   monat: async () => (await import('./seiten/monat.js')).monatsseite,
+  suche: async () => (await import('./seiten/katalog.js')).katalogseite,
 }
 
-const SIGNATUR = ['ort', 'status', 'daten', 'merk']
+const SIGNATUR = ['ort', 'status', 'daten', 'merk', 'katalog']
 
-const ortText = (ort) => `${ort.art}/${ort.schluessel}`
+// Die Suche bleibt eine Ansicht, auch wenn sich der Filter in der Adresse ändert: kein Sprung nach oben.
+const ortText = (ort) => (ort.art === 'suche' ? 'suche' : `${ort.art}/${ort.schluessel}`)
 
 /** Ecchi und "nur Favoriten" wirken auf beide Ansichten gleich: hier einmal, vor der Seite. */
 function ansichtVon(zustand) {
-  if (!zustand.daten) return zustand
+  if (!zustand.daten?.termine) return zustand
   const { termine, titel } = zustand.daten
   return { ...zustand, daten: { ...zustand.daten, termine: sichtbareTermine(termine, titel, zustand.merk) } }
 }
