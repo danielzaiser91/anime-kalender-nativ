@@ -1,4 +1,4 @@
-// Handlungen der Oberfläche über Ereignisse an der Hülle: Knöpfe mit data-aktion (Favorit, Gesehen, nur Favoriten, Einstellungen) und der Datum-Sprung.
+// Handlungen der Oberfläche über Ereignisse an der Hülle: Knöpfe mit data-aktion (Favorit, Gesehen, nur Favoriten, Einstellungen) und Formulare mit data-absenden (Datum-Sprung, Suche).
 import { schalteFavorit, schalteGesehen, setzeOption } from '../logik/merken.js'
 import { sprungOrt } from '../logik/ort.js'
 import { aendereMerk } from '../zustand/merk.js'
@@ -8,6 +8,16 @@ const AENDERUNGEN = {
   favorit: (daten) => (merk) => schalteFavorit(merk, daten.ak),
   gesehen: (daten) => (merk) => schalteGesehen(merk, daten.ak, Number(daten.folge)),
   'nur-favoriten': () => (merk) => setzeOption(merk, 'nurFavoriten', !merk.nurFavoriten),
+}
+
+/** Die Ziel-Adresse eines abgeschickten Formulars (leer: nichts tun). Die Suche nimmt alle nicht leeren Felder in die Abfrage. */
+const ABSENDEN = {
+  sprung: (daten, formular) => daten.get('datum') && hashFuerOrt(sprungOrt(formular.dataset.art, daten.get('datum'))),
+  suche: (daten) => {
+    const abfrage = new URLSearchParams(daten)
+    for (const [name, wert] of [...abfrage]) if (!wert.trim()) abfrage.delete(name)
+    return `#/suche${abfrage.size ? `?${abfrage}` : ''}`
+  },
 }
 
 async function oeffneEinstellungen(knopf, { dialog, abhaengigkeiten }) {
@@ -31,10 +41,10 @@ export function verdrahteAktionen({ wurzel, dialog, abhaengigkeiten }) {
     else if (AENDERUNGEN[aktion]) aendereMerk(abhaengigkeiten, AENDERUNGEN[aktion](knopf.dataset))
   })
   wurzel.addEventListener('submit', (ereignis) => {
-    const formular = ereignis.target.closest('form.sprung')
+    const formular = ereignis.target.closest('form[data-absenden]')
     if (!formular) return
     ereignis.preventDefault()
-    const datum = new FormData(formular).get('datum')
-    if (datum) abhaengigkeiten.fenster.location.hash = hashFuerOrt(sprungOrt(formular.dataset.art, datum))
+    const ziel = ABSENDEN[formular.dataset.absenden](new FormData(formular), formular)
+    if (ziel) abhaengigkeiten.fenster.location.hash = ziel
   })
 }

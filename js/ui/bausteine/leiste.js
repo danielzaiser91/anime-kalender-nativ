@@ -15,7 +15,7 @@ function sprung({ ort, stand }) {
   const grenzen = stand ? { min: montagDerWoche(stand.von), max: addiereTage(montagDerWoche(stand.bis), 6) } : {}
   return h(
     'form',
-    { class: 'sprung', 'data-art': ort.art },
+    { class: 'sprung', 'data-absenden': 'sprung', 'data-art': ort.art },
     h('label', { for: 'sprung-datum' }, 'Datum'),
     h('input', { id: 'sprung-datum', name: 'datum', type: 'date', required: true, ...grenzen }),
     h('button', { type: 'submit', class: 'schalter' }, 'Gehen'),
@@ -27,7 +27,7 @@ export function leiste(zustand) {
   return h(
     'div',
     { class: 'leiste' },
-    h('nav', { class: 'ansichten', 'aria-label': 'Ansicht' }, ansichtLink('woche', zustand), ansichtLink('monat', zustand)),
+    h('nav', { class: 'ansichten', 'aria-label': 'Ansicht' }, ansichtLink('woche', zustand), ansichtLink('monat', zustand), h('a', { class: 'ansicht', href: '#/suche' }, 'Suche')),
     sprung(zustand),
     schalter({ text: '★ Nur Favoriten', name: 'Nur Favoriten zeigen', an: merk.nurFavoriten, aktion: 'nur-favoriten', fokus: 'nur-favoriten' }),
     schalter({ text: 'Einstellungen', name: 'Einstellungen öffnen',aktion: 'einstellungen', fokus: 'einstellungen' }),

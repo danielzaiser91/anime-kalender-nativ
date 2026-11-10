@@ -5,7 +5,9 @@ import { fuegeZusammen } from '../logik/woche.js'
 import { ORTE } from '../logik/ort.js'
 import { beobachteHash, leseHash } from './router.js'
 
-async function ladeAnsicht(lader, ort) {
+async function ladeAnsicht(abhaengigkeiten, ort) {
+  const { lader } = abhaengigkeiten
+  if (ort.art === 'suche') return (await import('./katalog-lauf.js')).ladeKatalogAnsicht(abhaengigkeiten, ort)
   const stand = await lader.ladeStand()
   const wochen = ORTE[ort.art].wochen(ort.schluessel).filter((woche) => woche >= stand.von && woche <= stand.bis)
   return { stand, daten: fuegeZusammen(await Promise.all(wochen.map(lader.ladeWoche))) }
@@ -13,11 +15,12 @@ async function ladeAnsicht(lader, ort) {
 
 const gleich = (a, b) => a?.art === b.art && a?.schluessel === b.schluessel
 
-async function zeigeOrt({ store, lader }, ort, heute) {
+async function zeigeOrt(abhaengigkeiten, ort, heute) {
+  const { store } = abhaengigkeiten
   store.setze({ ort, heute, status: 'laedt', daten: null })
   const heutig = () => gleich(store.lies().ort, ort)
   try {
-    const ansicht = await ladeAnsicht(lader, ort)
+    const ansicht = await ladeAnsicht(abhaengigkeiten, ort)
     if (heutig()) store.setze({ ...ansicht, status: 'bereit' })
   } catch (fehler) {
     if (heutig()) store.setze({ status: 'fehler', fehler: fehler.message })

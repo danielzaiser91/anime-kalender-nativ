@@ -4,7 +4,7 @@ import { leiste } from './leiste.js'
 import { zeitkopf } from './zeitkopf.js'
 import { standText } from '../../logik/wochentext.js'
 
-function fussnote(stand) {
+export function fussnote(stand) {
   const adresse = h('a', { href: 'https://anime-kalender.de' }, 'anime-kalender.de')
   const text = ['Newsletter, Push und alle Einzelheiten zu jedem Titel: ', adresse, '.']
   return h('footer', { class: 'fuss' }, stand && h('p', {}, `Datenstand ${standText(stand.erzeugt)}`), h('p', {}, text))

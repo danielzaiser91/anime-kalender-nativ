@@ -2,7 +2,7 @@
 
 Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben Daten (Animation mit deutscher Synchronfassung), aber
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
-bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel, Favoriten, Gesehen, ICS-Export.
+bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel, Favoriten, Gesehen, ICS-Export, Suche und Filter.
 
 ## Harte Grenzen
 
@@ -47,14 +47,14 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 
 ```
 index.html            Hülle mit Lade-Hinweis und noscript
-css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css
+css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css, suche.css
 js/main.js            Verdrahtung, höchstens 60 Zeilen
 js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>); speicher.js (localStorage von außen übergeben)
-js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabelle für beide Ansichten), Merken, ICS; Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
-js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel), merk.js (Favoriten, Gesehen, Wahlen ändern und speichern)
+js/logik/             reine Funktionen (Zeit, Woche und Monat (ort.js: eine Tabelle für beide Ansichten), Merken, ICS, Suche (suche*.js) und Filter (filter*.js, katalog.js); Panel: antwort*.js, wege*.js, dub.js nach shared/ und web/src/components/detail der Hauptseite)
+js/zustand/           store.js, router.js (Hash), ablauf.js (Laden bei Routenwechsel), katalog-lauf.js (lädt die Suche), merk.js (Favoriten, Gesehen, Wahlen ändern und speichern)
 js/ui/dom.js          h()
-js/ui/zeichnen.js     zeichnet die Ansicht (Monat lazy), hält den Fokus über das Neuzeichnen; ui/aktionen.js: Klicks (data-aktion) und Datum-Sprung
-js/ui/bausteine/      kleine Teile (Kachel, Leiste, Zeitkopf, Schalter, Seitenrahmen)
+js/ui/zeichnen.js     zeichnet die Ansicht (Monat lazy), hält den Fokus über das Neuzeichnen; ui/aktionen.js: Klicks (data-aktion) und Formulare (data-absenden: Datum-Sprung, Suche)
+js/ui/bausteine/      kleine Teile (Kachel, Leiste, Zeitkopf, Schalter, Seitenrahmen, Suchformular, Filterleiste, Trefferliste)
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
@@ -76,7 +76,19 @@ Panel darüber), Datum-Sprung (`<input type="date">` in der Leiste, springt in d
 ICS-Export der Favoriten (Termine ab heute, Berliner Zeit als UTC-Stempel plus `X-WR-TIMEZONE` wie die Hauptseite). Speicher (localStorage, Schlüssel wie
 auf der Hauptseite): `favorites` (Liste Kennungen), `gesehenBis` (Kennung → Folge), `ecchiZeigen` ("1"), dazu `nurFavoriten` ("1"). Nachgeladen werden
 `ui/seiten/monat.js`, `ui/einstellungen/` und `ui/ics/`; der Wächter misst jeden `import()`-Einstieg als eigenen Baustein. Gegenüber der Hauptseite fehlt
-noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Suche, weitere Filter, Offline; Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
+noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Offline; Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
+
+Schritt 4: Suche und Filter (`#/suche?q=…`, Link "Suche" in der Leiste; teilbar, Panel darüber als `#/suche/t/<Kennung>?q=…`). Erst beim Öffnen der Suche
+kommen `data/katalog.json` (je Titel eine Zeile mit Namen, Format, Jahr, FSK, Herkunft, Status und den Listen Genre, Schlagwort, Studio, Plattform, Bezugsquelle, Jahr, Art;
+Reihenfolge der Felder in `js/logik/katalog.js`), danach im Hintergrund `data/synonyme.json` (Name in Originalschrift und weitere Namen) und `data/sprecher.json`
+(Index; je Gruppe `data/sprecher/<Gruppe>.json` nur für gewählte Sprecher). Suche (`logik/suche*.js`) und Filter (`logik/filter*.js`) sind aus `web/src/lib/search.ts` und
+`filters.ts` der Hauptseite nachgebaut (Datenbank-Ansicht: erst Filter, dann Suche über den Rest): 10 Listen (Plattform, Bezugsquelle, Art, Status, FSK, Jahr, Genre,
+Schlagwort, Sprecher, Herkunft) je mit Einschluss und Ausschluss (Tipp reihum: nichts, ausgewählt, ausgeschlossen), Genre und Schlagwort verlangen alle gewählten Werte, die
+übrigen eines davon. Schnellfilter in der Suche: Favoriten, Cartoon, Kostenlos, TV, Disc, Verfügbar (Favoriten, Kostenlos, Verfügbar mit "ausblenden"). Alle Wahlen sind Links;
+der Zustand steht nur in der Adresse (Namen wie auf der Hauptseite: `p`, `anb`, `rt`, `st`, `fsk`, `y`, `g`, `kw`, `sp`, `her`, Ausschluss mit `x` davor; `fav`, `frei`, `wo` = 1 nur das, 0 ausblenden;
+`f` = geöffnete Liste). Status, "kostenlos" und "verfügbar" gelten zum Datenstand und werden beim Bau gerechnet (`tools/verdichten/katalog-felder.js`). Abweichungen: Reihenfolge
+der Treffer einfacher (Rang, Abstand, Name statt der Fundstellen-Punkte), keine Und/Oder-Umschaltung je Liste, keine Mindest-Vertrauensstufe; "bestätigt" und "Zweitanbieter"
+wirken auf Termine und kommen mit dem Filter des Kalenders.
 
 ## Oberfläche
 
@@ -105,6 +117,6 @@ Screenshots (375 und 1200 px, hell und dunkel), Konsole ohne Fehler, Start-KB (g
 Titel und Zeiten derselben Woche). Nach dem Deploy zusätzlich gegen die echte Pages-Adresse.
 
 Die Bauausgabe entsteht lokal wie im Workflow mit `sh tools/bauen.sh <Altrepo-Ordner> <Ausgabeordner>` (kopieren, verdichten, minifizieren,
-messen); Bauer und Prüfer lesen so dieselbe Zahl. Der PR-Bericht nennt Start, je Baustein (Panel, Monat, Einstellungen, ICS) und Gesamt (Start + alles Nachgeladene) minifiziert
+messen); Bauer und Prüfer lesen so dieselbe Zahl. Der PR-Bericht nennt Start, je Baustein (Panel, Monat, Suche, Einstellungen, ICS) und die Dateien der Suche (katalog, synonyme, sprecher) und Gesamt (Start + alles Nachgeladene) minifiziert
 und gzip, jeweils Vorher/Nachher mit Datenstand; der Wächter markiert jede Zahl über ihrem Ziel mit „über Ziel“ (kein Fehler). Bei einer
 Umbau-Änderung ohne Verhaltensänderung gehören Bilder vorher/nachher (byte-gleich) und die Konsole ohne Fehler dazu.

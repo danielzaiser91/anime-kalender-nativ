@@ -13,6 +13,10 @@ export function erzeugeLader(holeFn) {
     ladeStand: () => ladeJson('data/stand.json'),
     ladeWoche: (schluessel) => ladeJson(`data/woche/${schluessel}.json`),
     ladeTitelGruppe: (gruppe) => ladeJson(`data/titel/${gruppe}.json`),
+    ladeKatalog: () => ladeJson('data/katalog.json'),
+    ladeSynonyme: () => ladeJson('data/synonyme.json'),
+    ladeSprecherIndex: () => ladeJson('data/sprecher.json'),
+    ladeSprecherGruppe: (gruppe) => ladeJson(`data/sprecher/${gruppe}.json`),
   }
 }
 
