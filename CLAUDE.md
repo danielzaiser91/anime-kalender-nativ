@@ -2,7 +2,7 @@
 
 Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben Daten (Animation mit deutscher Synchronfassung), aber
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
-bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel (samt Handlung, Besetzung, Folgentiteln, Disc, Reihe, ähnlichen Titeln und Quellen), Favoriten, Gesehen, ICS-Export, Suche und Filter, News, Saison, Kalender-Abo.
+bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel (samt Handlung, Besetzung, Folgentiteln, Disc, Reihe, ähnlichen Titeln und Quellen), Favoriten, Gesehen, ICS-Export, Suche und Filter, News, Saison, Kalender-Abo, Was gucken?, Patch Notes.
 
 ## Harte Grenzen
 
@@ -111,6 +111,13 @@ Besetzung und Folgen öffnen erst auf Klick. Beim Bau entstehen: die Wahl der Ha
 Abweichungen: Reihenliste als Liste (kein Karussell), ohne Suche und ohne Staffelnummern aus `staffelStaende` ("Staffel n von m" fehlt, Teilnamen nur ohne Reihennamen gekürzt); Genres der Vorschläge
 in der Sprache der Daten (englisch, wie die Eckdaten); Disc-Zeilen zeigen Shop und Quelle gleich statt erst nach dem Antippen, kein Kalendereintrag für Disc-Termine; kein Schlagworte-Abschnitt,
 keine Neuigkeiten zum Titel, keine Beleg-Bilder (Worker); `deFolgen` der Handlung (2 Titel) fehlt; Besetzung nur mit Rollen oder ANN-Adresse (alle 2.511 Titel mit `hasVoices` haben beides oder eins; gemessen am Datenstand 10.11.2026).
+
+Schritt 7: Was gucken? (`#/gucken`, Abfrage `s=<Zahl>` setzt den Startwert, also dasselbe Duell zum Teilen), Patch Notes, Link-Hinweise. Was gucken?: `data/empfehlung.json` (Pool der Hauptseite mit Kennung ak und Cover,
+`tools/verdichten/empfehlung.js`), Rechenkern aus `shared/empfehlung-*.ts` portiert (`logik/gucken-vektor.js`, `gucken-kern.js`, `gucken-reise.js`, `gucken-ablauf.js`; an drei festen Eingaben mit der Hauptseite gleich), Ablauf als Zustand `gucken` im Store
+(`zustand/gucken.js`, Handlungen `data-aktion="gucken-<name>"`). Duell: zwei Karten, Tippen oder Wischen zur Seite des Titels (`ui/wischen.js`, `logik/wisch.js`: mindestens 60 px, anderthalbmal so weit wie quer); danach fünf Vorschläge (Cover öffnet das Panel,
+Favorit, Schon gesehen, Nicht interessiert; Ablage mit Zurückholen; Speicher `empfehlung:gesehen`, `empfehlung:verworfen` wie die Hauptseite). Patch Notes: `data/patchnotes.json` unverändert aus der Hauptseite, Knopf "Neu auf der Webseite" in den News, Dialog mit Filter, Wischen nach unten am Kopf schließt;
+"ansehen" führt auf die Hauptseite. Abo-Seite: Links auf Newsletter und Push der Hauptseite. Abweichungen: keine Animationen im Duell, kein Anbieter-Blatt (Vorrang eigener Anbieter), keine Detail-Leinwand mit Trailer (das Panel ersetzt sie), kein Speichern der Reise über Neuladen,
+keine Einleitung mit Cover-Mosaik, kein Ungelesen-Punkt am Patch-Notes-Knopf, Duell-Karten immer im Hochformat-Cover (kein Banner).
 
 ## Oberfläche
 

@@ -7,6 +7,8 @@ const MIN_TITEL = 300
 const MIN_TITEL_VOLL = 1500
 const MIN_RELEASES = 300
 const MIN_KENNUNGEN = 1000
+const MIN_EINSTIEGE = 300
+const MIN_PATCHNOTES = 5
 const DATUM = /^\d{4}-\d{2}-\d{2}$/
 
 const lies = (wurzel, pfad) => JSON.parse(readFileSync(join(wurzel, pfad), 'utf8'))
@@ -29,6 +31,12 @@ function pruefeMengen({ events, titel, titelVoll, releases, kennungen, meta, sai
   if (!Array.isArray(saison?.katalog) || !Array.isArray(ausblick?.katalog) || typeof saison.jp !== 'object') throw new Error('saison.json / saison-ausblick.json: Form unerwartet')
 }
 
+/** "Was gucken?" und "Neu auf der Webseite": ohne Pool oder ohne Einträge wäre die Ansicht leer, also kein Deploy. */
+function pruefeGucken({ empfehlung, patchnotes }) {
+  if (!Array.isArray(empfehlung?.einstiege) || empfehlung.einstiege.length < MIN_EINSTIEGE) throw new Error(`empfehlung.json: ${empfehlung?.einstiege?.length} Einstiege, erwartet mindestens ${MIN_EINSTIEGE}`)
+  if (!Array.isArray(patchnotes) || patchnotes.length < MIN_PATCHNOTES) throw new Error(`patchnotes.json: ${patchnotes?.length} Einträge, erwartet mindestens ${MIN_PATCHNOTES}`)
+}
+
 export function ladeQuelle(wurzel) {
   const quelle = {
     events: lies(wurzel, 'public/data/events.json'),
@@ -41,8 +49,11 @@ export function ladeQuelle(wurzel) {
     news: lies(wurzel, 'public/data/news.json'),
     saison: lies(wurzel, 'public/data/saison.json'),
     ausblick: lies(wurzel, 'public/data/saison-ausblick.json'),
+    empfehlung: lies(wurzel, 'public/data/empfehlung.json'),
+    patchnotes: lies(wurzel, 'public/data/patchnotes.json'),
   }
   pruefeMengen(quelle)
+  pruefeGucken(quelle)
   quelle.events.forEach(pruefeTermin)
   return quelle
 }

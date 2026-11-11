@@ -26,7 +26,8 @@ function tagKnoten(tag, kontext) {
 
 function kopf(news) {
   const rss = h('a', { class: 'rss', href: 'data/feeds/news.xml', type: 'application/rss+xml' }, 'RSS-Feed')
-  return h('div', { class: 'seitenkopf' }, h('h2', { class: 'seiten-titel' }, 'Was sich getan hat'), h('p', {}, `seit ${datumKurz(news.grenze)} · `, rss))
+  const patchnotes = h('button', { type: 'button', class: 'schalter', 'data-aktion': 'patchnotes', 'data-fokus': 'patchnotes', 'aria-haspopup': 'dialog' }, 'Neu auf der Webseite')
+  return h('div', { class: 'seitenkopf' }, h('h2', { class: 'seiten-titel' }, 'Was sich getan hat'), h('p', {}, `seit ${datumKurz(news.grenze)} · `, rss), h('p', {}, patchnotes))
 }
 
 function aeltere(news, abfrage, heute) {

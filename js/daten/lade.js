@@ -27,6 +27,8 @@ export function erzeugeLader(holeFn) {
     ladeNewsWoche: (woche) => ladeJson(`data/news/${woche}.json`),
     ladeSaison: () => ladeJson('data/saison.json'),
     ladeFeeds: () => ladeJson('data/feeds.json'),
+    ladeEmpfehlung: () => ladeJson('data/empfehlung.json'),
+    ladePatchnotes: () => ladeJson('data/patchnotes.json'),
   }
 }
 

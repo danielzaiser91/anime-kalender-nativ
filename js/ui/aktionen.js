@@ -1,4 +1,4 @@
-// Handlungen der Oberfläche über Ereignisse an der Hülle: Knöpfe mit data-aktion (Favorit, Gesehen, nur Favoriten, Einstellungen) und Formulare mit data-absenden (Datum-Sprung, Suche).
+// Handlungen der Oberfläche über Ereignisse an der Hülle: Knöpfe mit data-aktion (Favorit, Gesehen, nur Favoriten, Einstellungen, Patch Notes, Was gucken?) und Formulare mit data-absenden (Datum-Sprung, Suche).
 import { schalteFavorit, schalteGesehen, setzeOption } from '../logik/merken.js'
 import { sprungOrt } from '../logik/ort.js'
 import { aendereMerk } from '../zustand/merk.js'
@@ -29,6 +29,26 @@ async function oeffneEinstellungen(knopf, { dialog, abhaengigkeiten }) {
   }
 }
 
+/** "Neu auf der Webseite" in demselben Dialog wie die Einstellungen; nach dem Schließen bekommt der Knopf den Fokus zurück. */
+async function oeffnePatchnotes(knopf, { dialog, abhaengigkeiten }) {
+  try {
+    const { oeffnePatchnotes: oeffne } = await import('./patchnotes/patchnotes.js')
+    await oeffne(dialog, { abhaengigkeiten, fokusZurueck: knopf })
+  } catch {
+    knopf.textContent = 'Nicht ladbar, Seite neu laden'
+  }
+}
+
+/** Die Handlungen von "Was gucken?" (data-aktion "gucken-<name>") liegen in zustand/gucken.js und kommen erst mit der ersten. */
+async function fuehreGucken(knopf, abhaengigkeiten) {
+  try {
+    const { fuehreGuckenAus } = await import('../zustand/gucken.js')
+    fuehreGuckenAus(abhaengigkeiten, { aktion: knopf.dataset.aktion.slice('gucken-'.length), daten: knopf.dataset })
+  } catch {
+    knopf.textContent = 'Nicht ladbar, Seite neu laden'
+  }
+}
+
 export function verdrahteAktionen({ wurzel, dialog, abhaengigkeiten }) {
   dialog.addEventListener('close', () => wurzel.querySelector('[data-fokus="einstellungen"]')?.focus())
   dialog.addEventListener('click', (ereignis) => {
@@ -38,6 +58,8 @@ export function verdrahteAktionen({ wurzel, dialog, abhaengigkeiten }) {
     const knopf = ereignis.target.closest('[data-aktion]')
     const aktion = knopf?.dataset.aktion
     if (aktion === 'einstellungen') oeffneEinstellungen(knopf, { dialog, abhaengigkeiten })
+    else if (aktion === 'patchnotes') oeffnePatchnotes(knopf, { dialog, abhaengigkeiten })
+    else if (aktion?.startsWith('gucken-')) fuehreGucken(knopf, abhaengigkeiten)
     else if (AENDERUNGEN[aktion]) aendereMerk(abhaengigkeiten, AENDERUNGEN[aktion](knopf.dataset))
   })
   wurzel.addEventListener('submit', (ereignis) => {

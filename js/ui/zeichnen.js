@@ -4,9 +4,10 @@ import { wochenseite } from './seiten/woche.js'
 import { sichtbareTermine } from '../logik/merken.js'
 import { mitAbfrage } from '../zustand/router.js'
 
-/** News, Saison und Abo teilen ein Stylesheet, das erst mit der ersten dieser Ansichten kommt (der Start bleibt klein). */
-const mitCss = async (laden) => {
-  await (await import('./css-laden.js')).ladeCss('css/seiten.css')
+/** News, Saison, Abo und Was gucken? teilen ein Stylesheet, das erst mit der ersten dieser Ansichten kommt (der Start bleibt klein); weitere Dateien gehören einer Ansicht. */
+const mitCss = async (laden, ...weitere) => {
+  const { ladeCss } = await import('./css-laden.js')
+  await Promise.all(['css/seiten.css', ...weitere].map(ladeCss))
   return laden()
 }
 
@@ -17,11 +18,12 @@ const SEITEN = {
   news: () => mitCss(async () => (await import('./seiten/news.js')).newsseite),
   saison: () => mitCss(async () => (await import('./seiten/saison.js')).saisonseite),
   abo: () => mitCss(async () => (await import('./seiten/abo.js')).aboseite),
+  gucken: () => mitCss(async () => (await import('./seiten/gucken.js')).guckenseite, 'css/gucken.css'),
 }
 
-const SIGNATUR = ['ort', 'status', 'daten', 'merk', 'katalog']
+const SIGNATUR = ['ort', 'status', 'daten', 'merk', 'katalog', 'gucken']
 
-// Suche, News, Saison und Abo bleiben eine Ansicht, auch wenn sich ihre Abfrage in der Adresse ändert: kein Sprung nach oben.
+// Suche, News, Saison, Abo und Was gucken? bleiben eine Ansicht, auch wenn sich ihre Abfrage in der Adresse ändert: kein Sprung nach oben.
 const ortText = (ort) => (mitAbfrage(ort.art) ? ort.art : `${ort.art}/${ort.schluessel}`)
 
 /** Ecchi und "nur Favoriten" wirken auf beide Ansichten gleich: hier einmal, vor der Seite. */

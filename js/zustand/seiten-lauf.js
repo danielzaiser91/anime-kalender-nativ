@@ -1,4 +1,4 @@
-// Laden für News, Saison und Abo (wird erst beim Öffnen einer dieser Ansichten geladen): die Dateien der Ansicht, dazu der Stand für die Fußnote.
+// Laden für News, Saison, Abo und Was gucken? (wird erst beim Öffnen einer dieser Ansichten geladen): die Dateien der Ansicht, dazu der Stand für die Fußnote.
 import { benoetigteWochen, gibtAelteres, leseNewsAbfrage, newsGrenze } from '../logik/news.js'
 
 /** Die Wochen ab der Grenze (neueste zuerst); `aelteres` sagt, ob es dahinter noch Meldungen gibt. */
@@ -15,6 +15,7 @@ const DATEN = {
   news: ladeNews,
   saison: async ({ lader }) => ({ saison: await lader.ladeSaison() }),
   abo: async ({ lader }) => ({ feeds: await lader.ladeFeeds() }),
+  gucken: async ({ lader }) => ({ pool: await lader.ladeEmpfehlung() }),
 }
 
 export async function ladeSeitenAnsicht(abhaengigkeiten, ort) {

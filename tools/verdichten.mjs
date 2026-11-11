@@ -1,5 +1,5 @@
 // Datenschritt: node tools/verdichten.mjs <Altrepo-Ordner> <Ausgabe-Ordner> [Quell-SHA]
-// Liest public/data des Altrepos, prüft es und schreibt <Ausgabe>/stand.json, woche, titel, sprecher, news, katalog, saison, feeds (siehe CLAUDE.md, Ordner).
+// Liest public/data des Altrepos, prüft es und schreibt <Ausgabe>/stand.json, woche, titel, sprecher, news, katalog, saison, feeds, empfehlung, patchnotes (siehe CLAUDE.md, Ordner).
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { ladeQuelle } from './verdichten/quelle.js'
@@ -13,6 +13,8 @@ import { baueNews, newsKontext } from './verdichten/news.js'
 import { baueSaison } from './verdichten/saison.js'
 import { kennungenMitPanel } from './verdichten/kennung.js'
 import { baueFeedListe, ladeFeeds } from './verdichten/feeds.js'
+import { baueEmpfehlung } from './verdichten/empfehlung.js'
+import { bauePatchnotes } from './verdichten/patchnotes.js'
 
 function schreibeJson(pfad, daten) {
   writeFileSync(pfad, JSON.stringify(daten))
@@ -43,6 +45,14 @@ function schreibeSeiten({ altrepo, ausgabe, quelle, gruppen }) {
   return news.index.wochen.length
 }
 
+/** "Was gucken?" (Pool) und "Neu auf der Webseite" (Patch Notes); gibt die Zahl der Einstiege zurück. */
+function schreibeGucken({ ausgabe, quelle, gruppen }) {
+  const pool = baueEmpfehlung(quelle, kennungenMitPanel(quelle.kennungen, gruppen))
+  schreibeJson(join(ausgabe, 'empfehlung.json'), pool)
+  schreibeJson(join(ausgabe, 'patchnotes.json'), bauePatchnotes(quelle.patchnotes))
+  return pool.einstiege.length
+}
+
 function main([altrepo, ausgabe, sha = null]) {
   if (!altrepo || !ausgabe) throw new Error('Aufruf: node tools/verdichten.mjs <Altrepo-Ordner> <Ausgabe-Ordner> [Quell-SHA]')
   const quelle = ladeQuelle(altrepo)
@@ -61,8 +71,9 @@ function main([altrepo, ausgabe, sha = null]) {
   schreibeJson(join(ausgabe, 'synonyme.json'), baueSynonyme(quelle.synonyme, quelle.titelVoll, katalog))
   schreibeJson(join(ausgabe, 'sprecher.json'), sprecher.index)
   const wochenNews = schreibeSeiten({ altrepo, ausgabe, quelle, gruppen })
+  const pool = schreibeGucken({ ausgabe, quelle, gruppen })
   schreibeJson(join(ausgabe, 'stand.json'), stand)
-  console.log(`verdichtet: ${wochen.size} Wochen ${bereich.von} bis ${bereich.bis}, ${quelle.events.length} Termine, ${gruppen.size} Titelgruppen, ${katalog.titel.length} Katalogtitel, ${wochenNews} Newswochen, Stand ${stand.erzeugt}`)
+  console.log(`verdichtet: ${wochen.size} Wochen ${bereich.von} bis ${bereich.bis}, ${quelle.events.length} Termine, ${gruppen.size} Titelgruppen, ${katalog.titel.length} Katalogtitel, ${wochenNews} Newswochen, ${pool} Einstiege für Was gucken, Stand ${stand.erzeugt}`)
 }
 
 main(process.argv.slice(2))

@@ -1,0 +1,123 @@
+/* Neu auf der Webseite (<dialog class="panel">): kommt erst beim Öffnen (ui/patchnotes/patchnotes.js). */
+.patchnotes {
+  gap: 0.75rem;
+}
+
+.pn-kopf {
+  display: grid;
+  gap: 0.25rem;
+  padding: var(--abstand);
+  border-bottom: 1px solid var(--rand);
+  touch-action: pan-x;
+}
+
+.pn-kopf .panel-knopf {
+  justify-self: start;
+}
+
+.pn-kicker {
+  margin: 0;
+  color: var(--leise);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pn-kopf h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.pn-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0 var(--abstand);
+}
+
+.pn-liste {
+  padding: 0 var(--abstand);
+}
+
+.pn-tag {
+  margin-bottom: 1rem;
+}
+
+.pn-tag-kopf {
+  margin: 0 0 0.375rem;
+  font-size: 1rem;
+}
+
+.pn-hl {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--akzent-text);
+  border-radius: 0.5rem;
+  background: var(--flaeche-2);
+}
+
+.pn-hl-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pn-hl-titel {
+  font-weight: 700;
+}
+
+.pn-hl-hinweis,
+.pn-zeile .h {
+  color: var(--leise);
+  font-size: 0.8125rem;
+}
+
+.pn-marke {
+  color: var(--akzent-text);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.pn-zeile {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 0.9375rem;
+}
+
+.pn-zeile .t {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.pn-zeile .h {
+  flex-basis: 100%;
+  padding-left: 1.5rem;
+}
+
+.pn-symbol {
+  display: inline-flex;
+  width: 1.25rem;
+  justify-content: center;
+  color: var(--akzent-text);
+}
+
+.pn-entwurf {
+  color: var(--leise);
+  font-weight: 400;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
