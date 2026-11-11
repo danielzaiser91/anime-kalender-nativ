@@ -22,6 +22,14 @@ function gruppe(titel, feeds, offen) {
   return h('details', { class: 'gruppe', open: offen }, h('summary', {}, `${titel} · ${feeds.length}`), feedListe(feeds))
 }
 
+/** Newsletter und Push gibt es hier nicht (kein eigener Dienst): nur der Weg zur Hauptseite, wo beide eingerichtet werden. */
+function hauptseitenHinweis() {
+  const newsletter = h('a', { href: 'https://anime-kalender.de/#/newsletter' }, 'Newsletter: neue Termine per Mail')
+  const push = h('a', { href: 'https://anime-kalender.de/#/woche' }, 'Push für Favoriten: Meldung, wenn eine gemerkte Folge erscheint')
+  const hinweis = 'Beides richtest du auf anime-kalender.de ein (Push dort im Menü der Kalenderansicht, nur in Browsern, die es können).'
+  return h('section', { class: 'hauptseite-hinweis' }, h('h3', {}, 'Newsletter und Push'), h('ul', {}, h('li', {}, newsletter), h('li', {}, push)), h('p', { class: 'hinweis-zeile' }, hinweis))
+}
+
 function inhalt(zustand) {
   const meldung = ladeMeldung(zustand)
   if (meldung) return meldung
@@ -37,6 +45,7 @@ function inhalt(zustand) {
     gruppe('Nach Plattform', von('plattform'), true),
     gruppe('Nach Genre', von('genre'), false),
     rss,
+    hauptseitenHinweis(),
   )
 }
 

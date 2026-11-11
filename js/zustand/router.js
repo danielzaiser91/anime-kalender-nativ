@@ -1,12 +1,12 @@
 // Adresse im Hash, teilbar, kein Neuladen beim Blättern: "#/woche", "#/woche/JJJJ-Www", "#/monat", "#/monat/JJJJ-MM", dazu "/t/<Kennung>"
 // für das Panel eines Titels ("#/woche/2026-W45/t/1572", kurz "#/t/1572" über der gerade gezeigten Ansicht).
-// Suche, News, Saison und Abo tragen ihre Wahl als Abfrage: "#/suche?q=naruto&g=Action", "#/news?art=neu", mit Panel "#/suche/t/1572?q=naruto".
+// Suche, News, Saison, Abo und Was gucken? tragen ihre Wahl als Abfrage: "#/suche?q=naruto&g=Action", "#/news?art=neu", mit Panel "#/suche/t/1572?q=naruto".
 import { istWochenschluessel } from '../logik/zeit.js'
 import { istMonatsschluessel } from '../logik/monat.js'
 
 const KENNUNG = /^\d+$/
-const GUELTIG = { woche: istWochenschluessel, monat: istMonatsschluessel, suche: () => false, news: () => false, saison: () => false, abo: () => false }
-const ABFRAGE_ARTEN = ['suche', 'news', 'saison', 'abo']
+const GUELTIG = { woche: istWochenschluessel, monat: istMonatsschluessel, suche: () => false, news: () => false, saison: () => false, abo: () => false, gucken: () => false }
+const ABFRAGE_ARTEN = ['suche', 'news', 'saison', 'abo', 'gucken']
 
 /** Ansichten ohne Zeitschlüssel: ihr "Schlüssel" ist die Abfrage der Adresse. */
 export const mitAbfrage = (art) => ABFRAGE_ARTEN.includes(art)

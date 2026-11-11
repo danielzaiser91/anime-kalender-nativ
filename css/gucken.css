@@ -1,0 +1,214 @@
+/* Was gucken?: Einleitung, Duell (zwei Karten, Wischen zur Seite), Vorschläge, Ablage. Kommt mit der Ansicht (js/ui/css-laden.js), nutzt .seiten-titel, .hinweis-zeile und .schalter. */
+.gucken-start,
+.gucken-duell,
+.gucken-ergebnis {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.gucken-leiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.schalter.hervor {
+  background: var(--akzent);
+  border-color: var(--akzent);
+  color: #15171c;
+}
+
+.gucken-punkte {
+  display: flex;
+  gap: 0.375rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.punkt {
+  display: block;
+  width: 22px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--rand);
+}
+
+.punkt.an {
+  background: var(--akzent);
+}
+
+.gucken-duell .seiten-titel,
+.gucken-duell .hinweis-zeile {
+  text-align: center;
+}
+
+.gucken-paar {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  touch-action: pan-y;
+}
+
+.gucken-karte {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--rand);
+  border-radius: 0.75rem;
+  background: var(--flaeche-2);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.gucken-cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gucken-name {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 2.5rem 0.625rem 0.625rem;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.85));
+  font: 700 1rem/1.2 var(--schrift-titel);
+}
+
+.gucken-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.375rem;
+  font: 600 0.6875rem var(--schrift-text);
+}
+
+.gucken-chip {
+  padding: 0.0625rem 0.5rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.22);
+  font-style: normal;
+}
+
+.gucken-oder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 0.25rem 0.5rem;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--rand);
+  border-radius: 999px;
+  background: var(--grund);
+  color: var(--leise);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.gucken-galerie {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 1rem 0.75rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gucken-vorschlag {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.gucken-vorschlag h3 {
+  display: -webkit-box;
+  min-height: 2.4em;
+  overflow: hidden;
+  font-size: 0.875rem;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.gucken-info {
+  min-height: 2.4em;
+  margin: 0;
+  color: var(--leise);
+  font-size: 0.75rem;
+}
+
+.gucken-vorschlag-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border: 1px solid var(--rand);
+  border-radius: 0.5rem;
+  background: var(--flaeche-2);
+}
+
+.gucken-staffel {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 1.25rem 0.375rem 0.375rem;
+  background: linear-gradient(transparent, rgb(0 0 0 / 0.85));
+  color: #fff;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+}
+
+.gucken-aktionen {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.gucken-aktionen .schalter {
+  justify-content: flex-start;
+  font-size: 0.8125rem;
+}
+
+.gucken-ablage-liste {
+  margin: 0.25rem 0 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.gucken-ablage-liste li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.125rem 0;
+}
+
+.hauptseite-hinweis {
+  margin-top: 1.5rem;
+}
+
+.hauptseite-hinweis ul {
+  margin: 0.25rem 0;
+  padding-left: 1.25rem;
+}
+
+.gucken-ergebnis .gruppe {
+  margin-top: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gucken-karte,
+  .gucken-oder {
+    transition: none;
+  }
+}
