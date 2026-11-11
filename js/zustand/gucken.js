@@ -17,7 +17,7 @@ function startwertVon(abfrage, zufall) {
 function startWerte({ store, zufall }) {
   const { daten, merk, ort } = store.lies()
   const kontext = baueKontext(ohneEcchiEinstiege(daten.pool, merk.ecchi))
-  return { kontext, startwert: startwertVon(ort.schluessel, zufall), ausgeschlossen: ausgeschlossenFuerReise(merk) }
+  return { kontext, startwert: startwertVon(ort.schluessel, zufall), ausgeschlossen: ausgeschlossenFuerReise(merk), weg: wegVon(merk) }
 }
 
 /** Gesehen und "Nein" legen den Titel in die jeweilige Menge und lassen den nächsten der Rangliste nachrücken. */

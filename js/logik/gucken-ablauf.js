@@ -4,15 +4,20 @@ import { antworteSitzung, DUELLE_MAX, DUELLE_START, istFertig, neueSitzung, neue
 import { ersetzeVorschlag, ersteVorschlaege, naechstesZiel, rangliste } from './gucken-reise.js'
 
 /** "Los geht's" und "Von vorn": neue Sitzung mit den Abzügen; die Galerie des letzten Ergebnisses bleibt, bis das nächste kommt. */
-export function neueReise(g, { kontext, startwert, ausgeschlossen }) {
-  return { ...g, phase: 'duell', kontext, sitzung: neueSitzung(neuerZustand(kontext, startwert, ausgeschlossen)), ziel: DUELLE_START, gezeigt: g?.gezeigt ?? [] }
+export function neueReise(g, { kontext, startwert, ausgeschlossen, weg }) {
+  const sitzung = neueSitzung(neuerZustand(kontext, startwert, ausgeschlossen))
+  return naechsterSchritt({ ...g, phase: 'duell', kontext, sitzung, ziel: DUELLE_START, gezeigt: g?.gezeigt ?? [] }, weg)
 }
 
-/** Antwort ('A', 'B', 'N') auf das Paar; ist das Ziel erreicht (oder kein Paar mehr), zeigt die Galerie die ersten Plätze der Rangliste. */
+/** Ist das Ziel erreicht oder gibt es kein Paar mehr (auch gleich nach dem Start, wenn fast alles abgezogen ist), zeigt die Galerie die ersten Plätze der Rangliste. */
+function naechsterSchritt(g, weg) {
+  if (!istFertig(g.kontext, g.sitzung.zustand, g.ziel)) return g
+  return { ...g, phase: 'ergebnis', gezeigt: ersteVorschlaege(rangliste(g.kontext, g.sitzung.zustand, weg)) }
+}
+
+/** Antwort ('A', 'B', 'N') auf das Paar. */
 export function antworten(g, { antwort, weg }) {
-  const s = antworteSitzung(g.kontext, g.sitzung, antwort)
-  if (!istFertig(g.kontext, s.zustand, g.ziel)) return { ...g, sitzung: s }
-  return { ...g, sitzung: s, phase: 'ergebnis', gezeigt: ersteVorschlaege(rangliste(g.kontext, s.zustand, weg)) }
+  return naechsterSchritt({ ...g, sitzung: antworteSitzung(g.kontext, g.sitzung, antwort) }, weg)
 }
 
 /** Ein Duell zurück; am Anfang bleibt alles. */
