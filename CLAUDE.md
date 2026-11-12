@@ -122,13 +122,13 @@ keine Einleitung mit Cover-Mosaik, kein Ungelesen-Punkt am Patch-Notes-Knopf, Du
 Schritt 8: Offline und Installation. `sw.js` (Wurzelordner, klassischer Worker ohne Imports, 0,7 KB gzip, zählt im Wächter zum Gesamt-JS: Gesamt 78,9 von 80 KB) legt beim Installieren
 die Hülle laut `huelle.json` (vom Bau erzeugt, `tools/huelle.mjs`: HTML, alles unter `css/` und `js/`, Manifest; zusammen ca. 75 KB gzip, einmalig) in den Cache `huelle`.
 Alles Eigene gilt danach als "Netz zuerst, Cache als Rückfall" (Anfrage mit `no-cache`, damit Pages' Zwischenspeicher nichts Altes liefert); bei Netzfehler, Serverfehler
-oder nach 4 s langsamem Netz antwortet der Cache. Daten (`/data/`) liegen im Cache `daten` (höchstens 150 Dateien, die ältesten fallen zuerst heraus): offline lesbar ist, was zuletzt geladen
+oder nach 4 s langsamem Netz antwortet der Cache; ein 404 gilt (die Datei ist gewollt weg) und löscht den alten Stand. Daten (`/data/`) liegen im Cache `daten` (höchstens 150 Dateien, die zuletzt geholten bleiben): offline lesbar ist, was zuletzt geladen
 wurde; nie Angesehenes (z. B. Was gucken? ohne vorherigen Besuch) zeigt die ehrliche Fehlermeldung. Cover (fremde Adresse) fasst der Worker nicht an. Ein Hüllenstück, das nur offline aus dem Cache kommt, kann einen
 Stand älter sein als die übrigen; online holt jede Datei die neue Fassung beim ersten Gebrauch. Anmeldung in `ui/offline.js` (nach dem Laden, `import()` aus `main.js`), das Installationsangebot
 (`beforeinstallprompt`) liegt im Store (`installAngebot`, nicht in der Signatur: kein Neuzeichnen); in den Einstellungen `ui/einstellungen/installieren.js`: Hinweis zu Offline,
 Knopf "Als App installieren" (Chromium) oder Hinweis auf das Teilen-Menü (iOS). Manifest `manifest.webmanifest` mit Icons der Hauptseite. Barrierefreiheit-Durchgang: Kontrast 0 Fälle unter 4,5:1 (3:1 große Schrift),
-Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Bekannte Abweichung: dichte Listen (Monat, Titel
-in News) haben Tippziele von 20 px Höhe plus unsichtbare Überlagerung (`::after`), die sich bei 24 px Zeilenabstand mit den Nachbarn überlappt; erfüllt den Abstand 24 px (WCAG 2.5.8), nicht die 44 px dieser Datei.
+Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Tippziele 44 px: Monat bei Berührung (`pointer: coarse`) echt 44 px, mit der Maus kompakt. Bekannte Abweichung: Titel
+in News (19 px plus unsichtbare Überlagerung `::after`, die sich mit Nachbarn wie Tagesüberschrift und Quellen-Links überlappt) und die Monat-Einträge mit der Maus; erfüllt den Abstand 24 px (WCAG 2.5.8), nicht die 44 px dieser Datei.
 
 ## Oberfläche
 

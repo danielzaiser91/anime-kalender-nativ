@@ -105,6 +105,20 @@
   inset: -0.8rem -0.25rem;
 }
 
+/* Berührung: ein echtes Tippziel von 44 px statt der überlappenden Überlagerung (die Liste wird länger, die Maus-Ansicht bleibt dicht). */
+@media (pointer: coarse) {
+  .meintrag a {
+    display: inline-flex;
+    align-items: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .meintrag a::after {
+    display: none;
+  }
+}
+
 .mzeit {
   margin-right: 0.375rem;
   color: var(--leise);
