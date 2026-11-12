@@ -1,0 +1,389 @@
+/* Poster-Woche wie die Hauptseite (WeekView, PosterKarte, TvKasten); Maße aus deren Tailwind-Klassen, gemessen bei 390 px. */
+.tage {
+  margin-inline: 0.25rem;
+}
+
+.wtag {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--ak-linie);
+}
+
+.tag-kopf {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.tag-kopf h2 {
+  font: 700 13px/1.5 var(--ak-schrift-text);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tag-zahl {
+  order: -1;
+  font: 700 30px/1 var(--ak-schrift-titel);
+}
+
+.tag-zaehlung {
+  margin-left: auto;
+  color: var(--ak-leise);
+  font-size: 0.75rem;
+}
+
+.wtag-heute .tag-kopf h2,
+.wtag-heute .tag-zahl {
+  color: var(--ak-akzent-text);
+}
+
+.tag-leer {
+  margin: 0.25rem 0 0;
+  color: var(--ak-sehr-leise);
+  font-size: 0.875rem;
+}
+
+.poster-raster {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 40rem) {
+  .poster-raster {
+    grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    column-gap: 0.875rem;
+  }
+}
+
+.poster {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.poster-cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: var(--ak-flaeche-2);
+}
+
+.poster-cover img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.poster-leer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.5rem;
+  color: var(--ak-sehr-leise);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.poster-zeit {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  background: rgba(13, 15, 20, 0.85);
+  color: #f2f1ee;
+  font: 700 0.75rem/1rem var(--ak-schrift-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.poster-streifen {
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+}
+
+.poster-titel {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font: 700 0.875rem/1.375 var(--ak-schrift-text);
+}
+
+/* Der Titellink spannt sich über die ganze Karte: wie live öffnet ein Tipp irgendwo auf der Karte das Panel. */
+.poster-titel a {
+  color: var(--ak-text);
+  text-decoration: none;
+}
+
+.poster-titel a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+/* Schon gestartet oder ein vergangener Tag: wie live gedämpft (Cover halb, Titel leise). */
+.poster-vorbei img,
+.wtag-vorbei img,
+.tv-vorbei img {
+  opacity: 0.5;
+}
+
+.poster-vorbei .poster-titel a,
+.wtag-vorbei .poster-titel a,
+.tv-vorbei .tv-titel,
+.wtag-vorbei .tv-titel {
+  color: var(--ak-leise);
+}
+
+.poster-unter,
+.poster-marke {
+  margin: -0.125rem 0 0;
+  color: var(--ak-leise);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.poster-marke {
+  color: var(--ak-akzent-text);
+  font-weight: 600;
+}
+
+/* Stern: auf dem Handy ist das Panel ohne Merken, deshalb steht er hier; Ziel 44 px, sichtbar als dunkle Pille wie die Knöpfe der Hauptseite. */
+.schalter.poster-stern {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  z-index: 1;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f2f1ee;
+  font-size: 1rem;
+}
+
+.schalter.poster-stern::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(13, 15, 20, 0.72);
+}
+
+.schalter.poster-stern[aria-pressed='true'] {
+  color: var(--ak-favorit);
+}
+
+.schalter.poster-gesehen {
+  position: relative;
+  z-index: 1;
+  align-self: start;
+  min-height: 44px;
+  margin: -0.625rem 0 -0.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ak-akzent-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.schalter.poster-gesehen[aria-pressed='true'] {
+  color: var(--ak-leise);
+}
+
+.tv-kasten,
+.handel-kasten {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.125rem;
+  border-radius: 1rem;
+}
+
+.tv-kasten {
+  padding: 0.75rem 0.875rem;
+  border: 1px solid var(--ak-tv-rand);
+  background: var(--ak-tv-grund);
+}
+
+.kasten-kopf {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ak-tv);
+  padding-bottom: 0.375rem;
+  font: 700 0.75rem/1rem var(--ak-schrift-text);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.handel-kopf {
+  padding-bottom: 0;
+}
+
+/* Fernseher aus Rahmen und Fuß (das Strichzeichen der Hauptseite ohne SVG-Adresse). */
+.tv-zeichen {
+  position: relative;
+  box-sizing: border-box;
+  width: 14px;
+  height: 10px;
+  margin-bottom: 3px;
+  border: 1.5px solid currentcolor;
+  border-radius: 2px;
+}
+
+.tv-zeichen::after {
+  content: '';
+  position: absolute;
+  inset: 7px 3px auto;
+  transform: translateY(3px);
+  height: 1.5px;
+  background: currentcolor;
+}
+
+.tv-leer {
+  margin: 0;
+  color: var(--ak-sehr-leise);
+  font-size: 0.8125rem;
+}
+
+.tv-reihe {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0 0 0.25rem;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.875rem;
+  scrollbar-width: thin;
+}
+
+.tv-kachel {
+  display: grid;
+  flex: none;
+  grid-template-columns: 24px 54px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem;
+  width: 80%;
+  min-height: 44px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--ak-tv-rand);
+  border-radius: 0.75rem;
+  font-size: 0.8125rem;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 520px) {
+  .tv-kachel {
+    width: 46%;
+  }
+}
+
+.tv-cover {
+  width: 24px;
+  height: 34px;
+  border-radius: 0.25rem;
+  background: var(--ak-flaeche-2);
+  object-fit: cover;
+}
+
+.tv-zeit {
+  color: var(--ak-tv);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tv-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.tv-titel {
+  color: var(--ak-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tv-sender {
+  color: var(--ak-leise);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.tv-mehr {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  grid-column: 1 / -1;
+  justify-self: center;
+  color: var(--ak-tv);
+  font-size: 0.8125rem;
+}
+
+.handel-kasten {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--ak-linie);
+  background: color-mix(in srgb, var(--ak-flaeche) 40%, transparent);
+}
+
+.handel-kopf {
+  color: var(--ak-leise);
+}
+
+.handel-liste {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.handel-zeile {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-size: 0.8125rem;
+}
+
+.handel-titel {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  color: var(--ak-text);
+  font-weight: 600;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.handel-unter {
+  flex: none;
+  color: var(--ak-leise);
+  font-size: 0.75rem;
+}

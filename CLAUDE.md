@@ -131,6 +131,8 @@ Stand älter sein als die übrigen; online holt jede Datei die neue Fassung beim
 Knopf "Als App installieren" (Chromium) oder Hinweis auf das Teilen-Menü (iOS). Manifest `manifest.webmanifest` mit Icons der Hauptseite. Barrierefreiheit-Durchgang: Kontrast 0 Fälle unter 4,5:1 (3:1 große Schrift),
 Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Tippziele: bei Berührung 44 px (Monat-Einträge und Titel echt, Titel ohne längere Liste), mit Maus kompakt (WCAG 2.5.8, 24 px).
 
+Poster-Woche (12.11.2026, `css/poster.css`, `ui/bausteine/poster.js`, `kaesten.js`, `logik/woche-teile.js`): je Tag Kopf (Zahl, Wochentag, Zählung), zwei Poster je Zeile mit Uhrzeit-Pille ("seit" ab Start heute, Stand beim Laden), Anbieterstreifen und gedämpften vergangenen Terminen, "Im Handel" als Liste und "Im Fernsehen" als Kacheln zum Wischen. Abweichungen von live: Stern auf dem Cover und "Gesehen" unter der Karte (das Panel kennt kein Merken), keine breite Karte für Staffelstart/Finale, keine Fähnchen (Art, Premiere), kein Auge zum Ausblenden von TV/Handel, keine "in n Min"-Pille und keine Jetzt-Linie, kein Bündeln gleicher Titel und keine Zweitanbieter-Zeilen im Raster, kein Mehrspalten-Layout ab 1024 px. Kopf, Navigation und Pillenleiste der Hauptseite fehlen noch (Leiste mit Text-Knöpfen).
+
 ## Oberfläche
 
 Hell und dunkel nur über `prefers-color-scheme`. Echte Elemente (`button`, `a`, `nav`, `ol`), sichtbarer Fokus, Kontrast mindestens

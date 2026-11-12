@@ -42,5 +42,10 @@ export function heuteInBerlin(jetztMs) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin' }).format(jetztMs)
 }
 
+/** Uhrzeit "HH:MM" in Berlin. */
+export function uhrInBerlin(jetztMs) {
+  return new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(jetztMs)
+}
+
 /** Tage von `von` bis `bis` (negativ, wenn `bis` früher liegt). */
 export const diffTage = (von, bis) => (ausDatum(bis) - ausDatum(von)) / TAG_MS
