@@ -17,8 +17,8 @@ async function ladeAnsicht(abhaengigkeiten, ort) {
 const gleich = (a, b) => a?.art === b.art && a?.schluessel === b.schluessel
 
 async function zeigeOrt(abhaengigkeiten, ort, heute) {
-  const { store } = abhaengigkeiten
-  store.setze({ ort, heute, status: 'laedt', daten: null })
+  const { store, jetzt } = abhaengigkeiten
+  store.setze({ ort, heute, jetzt: jetzt(), status: 'laedt', daten: null })
   const heutig = () => gleich(store.lies().ort, ort)
   try {
     const ansicht = await ladeAnsicht(abhaengigkeiten, ort)

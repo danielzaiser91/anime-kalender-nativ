@@ -4,6 +4,8 @@ Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
 bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel (samt Handlung, Besetzung, Folgentiteln, Disc, Reihe, ähnlichen Titeln und Quellen), Favoriten, Gesehen, ICS-Export, Suche und Filter, News, Saison, Kalender-Abo, Was gucken?, Patch Notes.
 
+**Ziel Design: 1:1 wie live (anime-kalender.de)** (Daniel, 12.11.2026). Die native App sieht aus wie die Live-Seite: gleiche Tokens (`--ak-*`, Quelle `web/src/styles.css` der Hauptseite), gleiche Karten, Abstände und Schrift. Jede visuelle Änderung belegt ein Bildpaar (live und nativ, gleiche Breite 390 px, Hell- und Dunkelmodus, Playwright headless); der PR zeigt oder verlinkt die Bilder und nennt jede Abweichung einzeln. Ohne Bildpaar gilt eine visuelle Aussage als unbelegt.
+
 ## Harte Grenzen
 
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
@@ -128,6 +130,8 @@ Stand älter sein als die übrigen; online holt jede Datei die neue Fassung beim
 (`beforeinstallprompt`) liegt im Store (`installAngebot`, nicht in der Signatur: kein Neuzeichnen); in den Einstellungen `ui/einstellungen/installieren.js`: Hinweis zu Offline,
 Knopf "Als App installieren" (Chromium) oder Hinweis auf das Teilen-Menü (iOS). Manifest `manifest.webmanifest` mit Icons der Hauptseite. Barrierefreiheit-Durchgang: Kontrast 0 Fälle unter 4,5:1 (3:1 große Schrift),
 Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Tippziele: bei Berührung 44 px (Monat-Einträge und Titel echt, Titel ohne längere Liste), mit Maus kompakt (WCAG 2.5.8, 24 px).
+
+Poster-Woche (12.11.2026, `css/poster.css`, `ui/bausteine/poster.js`, `kaesten.js`, `logik/woche-teile.js`): je Tag Kopf (Zahl, Wochentag, Zählung), zwei Poster je Zeile mit Uhrzeit-Pille ("seit" ab Start heute, Stand beim Laden), Anbieterstreifen und gedämpften vergangenen Terminen, "Im Handel" als Liste und "Im Fernsehen" als Kacheln zum Wischen. Abweichungen von live: Stern auf dem Cover und "Gesehen" unter der Karte (das Panel kennt kein Merken), keine breite Karte für Staffelstart/Finale, keine Fähnchen (Art, Premiere), kein Auge zum Ausblenden von TV/Handel, keine "in n Min"-Pille und keine Jetzt-Linie, kein Bündeln gleicher Titel und keine Zweitanbieter-Zeilen im Raster, kein Mehrspalten-Layout ab 1024 px. Kopf, Navigation und Pillenleiste der Hauptseite fehlen noch (Leiste mit Text-Knöpfen).
 
 ## Oberfläche
 

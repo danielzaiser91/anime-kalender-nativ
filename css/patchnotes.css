@@ -7,7 +7,7 @@
   display: grid;
   gap: 0.25rem;
   padding: var(--abstand);
-  border-bottom: 1px solid var(--rand);
+  border-bottom: 1px solid var(--ak-rand);
   touch-action: pan-x;
 }
 
@@ -17,7 +17,7 @@
 
 .pn-kicker {
   margin: 0;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -54,9 +54,9 @@
   align-items: flex-start;
   margin-bottom: 0.5rem;
   padding: 0.5rem 0.625rem;
-  border: 1px solid var(--akzent-text);
+  border: 1px solid var(--ak-akzent-text);
   border-radius: 0.5rem;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .pn-hl-text {
@@ -70,12 +70,12 @@
 
 .pn-hl-hinweis,
 .pn-zeile .h {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.8125rem;
 }
 
 .pn-marke {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -103,11 +103,11 @@
   display: inline-flex;
   width: 1.25rem;
   justify-content: center;
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 .pn-entwurf {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-weight: 400;
 }
 
