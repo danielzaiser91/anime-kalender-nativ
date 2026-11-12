@@ -40,7 +40,18 @@ function verschachtelt(urteil) {
   return urteil(groesse('panel.js'), groesse('tief.js'))
 }
 
+/** Der Service Worker im Wurzelordner zählt zum Lazy-JS; ohne ihn bleibt der Wert gleich. */
+function swZaehlt() {
+  const wurzel = baue({ 'main.js': "import('./panel.js')", 'panel.js': MODUL })
+  const ohne = messeStart(wurzel, WOCHE).lazyJs
+  writeFileSync(join(wurzel, 'sw.js'), MODUL)
+  const mit = messeStart(wurzel, WOCHE).lazyJs
+  rmSync(wurzel, { recursive: true, force: true })
+  return mit > ohne ? 0 : 1
+}
+
 export const FAELLE_BUDGET = [
+  ['Service Worker im Wurzelordner zählt zum Gesamt-JS', swZaehlt, 0],
   ['Baustein genau am Budget', () => pruefeBudget(messung({ bausteine: baustein(20480) })).length, 0],
   ['Baustein ein Byte über Budget', () => pruefeBudget(messung({ bausteine: baustein(20481) })).length, 1],
   ['Zwei Bausteine je unter Budget, Summe darüber: kein Verstoß', () => pruefeBudget(messung({ bausteine: [...baustein(15 * KB), ...baustein(15 * KB, 'b.js')] })).length, 0],

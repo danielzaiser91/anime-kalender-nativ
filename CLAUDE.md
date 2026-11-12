@@ -47,6 +47,7 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 
 ```
 index.html            Hülle mit Lade-Hinweis und noscript
+sw.js                 Service Worker (Wurzelordner, sonst gilt sein Geltungsbereich nur für einen Unterordner; `huelle.json` entsteht beim Bau), manifest.webmanifest, icons/
 css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css, suche.css; seiten.css (News, Saison, Abo, lazy)
 js/main.js            Verdrahtung, höchstens 60 Zeilen
 js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>; je Titel handlung/ besetzung/ folgen/ disc/ aehnlich/<Kennung>, je Reihe reihe/<Reihe>); speicher.js (localStorage von außen übergeben)
@@ -58,25 +59,24 @@ js/ui/bausteine/      kleine Teile (Kachel, Leiste, Ansichten-Navigation, Zeitko
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten); darunter je ein eigenes Modul pro Baustein (handlung, folgen, disc, reihe, besetzung, aehnlich, quellen), das bausteine-tor.js erst holt, wenn der Titel es braucht (Merkmal `hat` im Titelbaustein)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
-tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel (außer esbuild in `bauen.sh`, Punkt 1)
+tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), huelle.mjs (Dateiliste für den Service Worker), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel (außer esbuild in `bauen.sh`, Punkt 1)
 .github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
 ```
 
 ## Stand und bekannte Abweichungen
 
-Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken) und Panel je Titel (`#/woche/<Woche>/t/<Kennung>`, teilbar):
-Antwort-Kasten, Wege nach Zugang mit Folgenbereichen und Lücken, Termine, Eckdaten. Die Panel-Logik ist aus der Hauptseite portiert und
-gegen deren Funktionen an allen Titeln gemessen. Nicht im Panel: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine,
-Disc-Bände, ausgebliebene Folgen und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
-Merken.
+Gebaut sind (Stand Schritt 8): Wochen- und Monatsansicht, Suche und Filter, Favoriten und Gesehen, Panel je Titel mit allen Bausteinen, News, Saison, Kalender-Abo,
+Was gucken?, Patch Notes und Offline/Installation; die Abschnitte je Schritt unten nennen Aufbau und Abweichungen. Gegenüber der Hauptseite fehlen noch:
+Bündeln gleicher Titel, Zweitanbieter-Zeilen, "bestätigt" und "Zweitanbieter" als Filter und im Panel Merken (Favorit und Gesehen sind nur an der Kachel bedienbar).
+Aus dem Panel-Durchstich (Schritt 2) fehlen weiter: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine, Disc-Bände, ausgebliebene Folgen
+und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert. Die Panel-Logik ist aus der Hauptseite portiert und gegen deren Funktionen an allen Titeln gemessen.
 
 Schritt 3: Monatsansicht (`#/monat/<JJJJ-MM>`, Raster Montag bis Sonntag, schmal eine Liste der Tage mit Terminen; gleiche Termine wie die Woche,
 Panel darüber), Datum-Sprung (`<input type="date">` in der Leiste, springt in der gerade gezeigten Ansicht), Favoriten (je Titel) und
 "Gesehen bis Folge n" (je Folge, Stand je Titel), Einstellungen (nur "Ecchi-Titel zeigen", Vorgabe aus wie auf der Hauptseite; Hell/Dunkel folgt dem System),
 ICS-Export der Favoriten (Termine ab heute, Berliner Zeit als UTC-Stempel plus `X-WR-TIMEZONE` wie die Hauptseite). Speicher (localStorage, Schlüssel wie
 auf der Hauptseite): `favorites` (Liste Kennungen), `gesehenBis` (Kennung → Folge), `ecchiZeigen` ("1"), dazu `nurFavoriten` ("1"). Nachgeladen werden
-`ui/seiten/monat.js`, `ui/einstellungen/` und `ui/ics/`; der Wächter misst jeden `import()`-Einstieg als eigenen Baustein. Gegenüber der Hauptseite fehlt
-noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Offline; Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
+`ui/seiten/monat.js`, `ui/einstellungen/` und `ui/ics/`; der Wächter misst jeden `import()`-Einstieg als eigenen Baustein. Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
 
 Schritt 4: Suche und Filter (`#/suche?q=…`, Link "Suche" in der Leiste; teilbar, Panel darüber als `#/suche/t/<Kennung>?q=…`). Erst beim Öffnen der Suche
 kommen `data/katalog.json` (je Titel eine Zeile mit Namen, Format, Jahr, FSK, Herkunft, Status und den Listen Genre, Schlagwort, Studio, Plattform, Bezugsquelle, Jahr, Art;
@@ -118,6 +118,17 @@ Schritt 7: Was gucken? (`#/gucken`, Abfrage `s=<Zahl>` setzt den Startwert, also
 Favorit, Schon gesehen, Nicht interessiert; Ablage mit Zurückholen; Speicher `empfehlung:gesehen`, `empfehlung:verworfen` wie die Hauptseite). Patch Notes: `data/patchnotes.json` unverändert aus der Hauptseite, Knopf "Neu auf der Webseite" in den News, Dialog mit Filter, Wischen nach unten am Kopf schließt;
 "ansehen" führt auf die Hauptseite. Abo-Seite: Links auf Newsletter und Push der Hauptseite. Abweichungen: keine Animationen im Duell, kein Anbieter-Blatt (Vorrang eigener Anbieter), keine Detail-Leinwand mit Trailer (das Panel ersetzt sie), kein Speichern der Reise über Neuladen,
 keine Einleitung mit Cover-Mosaik, kein Ungelesen-Punkt am Patch-Notes-Knopf, Duell-Karten immer im Hochformat-Cover (kein Banner).
+
+Schritt 8: Offline und Installation. `sw.js` (Wurzelordner, klassischer Worker ohne Imports, 0,7 KB gzip, zählt im Wächter zum Gesamt-JS: Gesamt 78,9 von 80 KB) legt beim Installieren
+die Hülle laut `huelle.json` (vom Bau erzeugt, `tools/huelle.mjs`: HTML, alles unter `css/` und `js/`, Manifest; zusammen ca. 75 KB gzip, einmalig) in den Cache `huelle`.
+Alles Eigene gilt danach als "Netz zuerst, Cache als Rückfall" (Anfrage mit `no-cache`, damit Pages' Zwischenspeicher nichts Altes liefert); bei Netzfehler, Serverfehler
+oder nach 4 s langsamem Netz antwortet der Cache. Daten (`/data/`) liegen im Cache `daten` (höchstens 150 Dateien, die ältesten fallen zuerst heraus): offline lesbar ist, was zuletzt geladen
+wurde; nie Angesehenes (z. B. Was gucken? ohne vorherigen Besuch) zeigt die ehrliche Fehlermeldung. Cover (fremde Adresse) fasst der Worker nicht an. Ein Hüllenstück, das nur offline aus dem Cache kommt, kann einen
+Stand älter sein als die übrigen; online holt jede Datei die neue Fassung beim ersten Gebrauch. Anmeldung in `ui/offline.js` (nach dem Laden, `import()` aus `main.js`), das Installationsangebot
+(`beforeinstallprompt`) liegt im Store (`installAngebot`, nicht in der Signatur: kein Neuzeichnen); in den Einstellungen `ui/einstellungen/installieren.js`: Hinweis zu Offline,
+Knopf "Als App installieren" (Chromium) oder Hinweis auf das Teilen-Menü (iOS). Manifest `manifest.webmanifest` mit Icons der Hauptseite. Barrierefreiheit-Durchgang: Kontrast 0 Fälle unter 4,5:1 (3:1 große Schrift),
+Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Bekannte Abweichung: dichte Listen (Monat, Titel
+in News) haben Tippziele von 20 px Höhe plus unsichtbare Überlagerung (`::after`), die sich bei 24 px Zeilenabstand mit den Nachbarn überlappt; erfüllt den Abstand 24 px (WCAG 2.5.8), nicht die 44 px dieser Datei.
 
 ## Oberfläche
 

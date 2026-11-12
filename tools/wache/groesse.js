@@ -68,12 +68,15 @@ function startCss(ausgabe) {
 // Dateien, die erst beim Öffnen der Suche kommen: sie zählen nicht zum Start, ihre Größe steht aber in der Zeile.
 const LAZY_DATEIEN = ['katalog.json', 'synonyme.json', 'sprecher.json']
 
+// Der Service Worker liegt im Wurzelordner (sonst gälte sein Geltungsbereich nur für einen Unterordner) und zählt zum Gesamt-JS.
+const swDatei = (ausgabe) => [join(ausgabe, 'sw.js')].filter(existsSync)
+
 /** Misst eine fertige Bauausgabe (_site); `woche` ist die Startwoche, deren Datei dazuzählt. */
 export function messeStart(ausgabe, woche) {
   const start = statischeModule(join(ausgabe, 'js', 'main.js'))
   const code = [join(ausgabe, 'index.html'), ...startCss(ausgabe), ...start]
   const daten = [join(ausgabe, 'data', 'stand.json'), join(ausgabe, 'data', 'woche', `${woche}.json`)]
-  const lazyJs = sammle(join(ausgabe, 'js'), '.js').filter((p) => !start.includes(p))
+  const lazyJs = [...sammle(join(ausgabe, 'js'), '.js').filter((p) => !start.includes(p)), ...swDatei(ausgabe)]
   const lazyCss = sammle(join(ausgabe, 'css'), '.css').filter((p) => !startCss(ausgabe).includes(p))
   const baustein = [...bausteine(start)].map(([ziel, module]) => ({ name: relative(join(ausgabe, 'js'), ziel).replaceAll('\\', '/'), bytes: summe(module) }))
   const lazyDaten = LAZY_DATEIEN.filter((name) => existsSync(join(ausgabe, 'data', name))).map((name) => ({ name, bytes: gz(join(ausgabe, 'data', name)) }))
