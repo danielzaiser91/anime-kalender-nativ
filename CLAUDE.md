@@ -4,6 +4,8 @@ Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
 bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel (samt Handlung, Besetzung, Folgentiteln, Disc, Reihe, ähnlichen Titeln und Quellen), Favoriten, Gesehen, ICS-Export, Suche und Filter, News, Saison, Kalender-Abo, Was gucken?, Patch Notes.
 
+**Ziel Design: 1:1 wie live (anime-kalender.de)** (Daniel, 12.11.2026). Die native App sieht aus wie die Live-Seite: gleiche Tokens (`--ak-*`, Quelle `web/src/styles.css` der Hauptseite), gleiche Karten, Abstände und Schrift. Jede visuelle Änderung belegt ein Bildpaar (live und nativ, gleiche Breite 390 px, Hell- und Dunkelmodus, Playwright headless); der PR zeigt oder verlinkt die Bilder und nennt jede Abweichung einzeln. Ohne Bildpaar gilt eine visuelle Aussage als unbelegt.
+
 ## Harte Grenzen
 
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
