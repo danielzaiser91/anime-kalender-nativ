@@ -1,31 +1,31 @@
 /* Farben, Schrift und Maße. Hell ist der Standard, Dunkel folgt dem System (Werte aus der Hauptseite). */
 :root {
   color-scheme: light dark;
-  --grund: #f5f4f0;
-  --flaeche: #ffffff;
-  --flaeche-2: #ebe9e3;
-  --rand: #d6d3cb;
-  --text: #15171c;
-  --leise: #555b66;
-  --akzent: #f54b27;
-  --akzent-text: #b8321a;
-  --fokus: #1d4ed8;
-  --schrift-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --schrift-titel: 'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif;
+  --ak-grund: #f5f4f0;
+  --ak-flaeche: #ffffff;
+  --ak-flaeche-2: #ebe9e3;
+  --ak-rand: #d6d3cb;
+  --ak-text: #15171c;
+  --ak-leise: #555b66;
+  --ak-akzent: #f54b27;
+  --ak-akzent-text: #b8321a;
+  --ak-fokus: #1d4ed8;
+  --ak-schrift-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ak-schrift-titel: 'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif;
   --abstand: 0.75rem;
   --breite: 52rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --grund: #0d0f14;
-    --flaeche: #151922;
-    --flaeche-2: #1b202a;
-    --rand: #2c3240;
-    --text: #f2f1ee;
-    --leise: #9aa0ab;
-    --akzent: #ff5a36;
-    --akzent-text: #ff7a5c;
-    --fokus: #93b4ff;
+    --ak-grund: #0d0f14;
+    --ak-flaeche: #151922;
+    --ak-flaeche-2: #1b202a;
+    --ak-rand: #2c3240;
+    --ak-text: #f2f1ee;
+    --ak-leise: #9aa0ab;
+    --ak-akzent: #ff5a36;
+    --ak-akzent-text: #ff7a5c;
+    --ak-fokus: #93b4ff;
   }
 }

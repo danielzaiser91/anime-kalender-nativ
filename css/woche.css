@@ -16,7 +16,7 @@
 
 .spanne p {
   margin: 0;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.875rem;
 }
 
@@ -26,10 +26,10 @@
   align-items: center;
   min-height: 44px;
   padding: 0 0.75rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.5rem;
-  background: var(--flaeche);
-  color: var(--text);
+  background: var(--ak-flaeche);
+  color: var(--ak-text);
   text-decoration: none;
   font-weight: 600;
 }
@@ -39,7 +39,7 @@
 }
 
 .blaettern[aria-disabled] {
-  color: var(--leise);
+  color: var(--ak-leise);
   opacity: 0.5;
 }
 
@@ -55,7 +55,7 @@
 .tag h2 {
   font-size: 1.125rem;
   padding-bottom: 0.25rem;
-  border-bottom: 2px solid var(--rand);
+  border-bottom: 2px solid var(--ak-rand);
   text-transform: capitalize;
 }
 
@@ -63,9 +63,9 @@
   margin-left: 0.5rem;
   padding: 0.1rem 0.5rem;
   border-radius: 0.5rem;
-  background: var(--akzent);
+  background: var(--ak-akzent);
   color: #15171c;
-  font: 700 0.75rem var(--schrift-text);
+  font: 700 0.75rem var(--ak-schrift-text);
   text-transform: none;
   vertical-align: middle;
 }
@@ -77,7 +77,7 @@
 }
 
 .leer {
-  color: var(--leise);
+  color: var(--ak-leise);
   margin: 0.5rem 0 0;
 }
 
@@ -87,7 +87,7 @@
   gap: var(--abstand);
   align-items: start;
   padding: var(--abstand) 0;
-  border-bottom: 1px solid var(--rand);
+  border-bottom: 1px solid var(--ak-rand);
 }
 
 .cover {
@@ -95,7 +95,7 @@
   height: 84px;
   object-fit: cover;
   border-radius: 0.375rem;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .titel {
@@ -104,7 +104,7 @@
 }
 
 .titel a {
-  color: var(--text);
+  color: var(--ak-text);
   text-decoration: none;
 }
 
@@ -144,11 +144,11 @@
 .text p {
   margin: 0.125rem 0 0;
   font-size: 0.875rem;
-  color: var(--leise);
+  color: var(--ak-leise);
 }
 
 .text .marke {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
   font-weight: 700;
 }
 
