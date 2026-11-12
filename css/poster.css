@@ -282,6 +282,7 @@
 }
 
 .tv-kachel {
+  position: relative;
   display: grid;
   flex: none;
   grid-template-columns: 24px 54px minmax(0, 1fr);
@@ -364,6 +365,7 @@
 }
 
 .handel-zeile {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -386,4 +388,12 @@
   flex: none;
   color: var(--ak-leise);
   font-size: 0.75rem;
+}
+
+/* Tippziel: der Titellink im Fernseh- und Handelskasten spannt sich über die ganze Kachel bzw. Zeile (mindestens 44 px hoch). */
+a.tv-titel::after,
+a.handel-titel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
 }

@@ -147,18 +147,6 @@
   color: var(--ak-leise);
 }
 
-.text .marke {
-  color: var(--ak-akzent-text);
-  font-weight: 700;
-}
-
-.zeit {
-  margin: 0;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
 .fuss {
   margin-top: 2rem;
 }
