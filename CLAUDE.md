@@ -127,13 +127,12 @@ wurde; nie Angesehenes (z. B. Was gucken? ohne vorherigen Besuch) zeigt die ehrl
 Stand älter sein als die übrigen; online holt jede Datei die neue Fassung beim ersten Gebrauch. Anmeldung in `ui/offline.js` (nach dem Laden, `import()` aus `main.js`), das Installationsangebot
 (`beforeinstallprompt`) liegt im Store (`installAngebot`, nicht in der Signatur: kein Neuzeichnen); in den Einstellungen `ui/einstellungen/installieren.js`: Hinweis zu Offline,
 Knopf "Als App installieren" (Chromium) oder Hinweis auf das Teilen-Menü (iOS). Manifest `manifest.webmanifest` mit Icons der Hauptseite. Barrierefreiheit-Durchgang: Kontrast 0 Fälle unter 4,5:1 (3:1 große Schrift),
-Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Tippziele 44 px: Monat bei Berührung (`pointer: coarse`) echt 44 px, mit der Maus kompakt. Bekannte Abweichung: Titel
-in News (19 px plus unsichtbare Überlagerung `::after`, die sich mit Nachbarn wie Tagesüberschrift und Quellen-Links überlappt) und die Monat-Einträge mit der Maus; erfüllt den Abstand 24 px (WCAG 2.5.8), nicht die 44 px dieser Datei.
+Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Tippziele: bei Berührung 44 px (Monat-Einträge und Titel echt, Titel ohne längere Liste), mit Maus kompakt (WCAG 2.5.8, 24 px).
 
 ## Oberfläche
 
 Hell und dunkel nur über `prefers-color-scheme`. Echte Elemente (`button`, `a`, `nav`, `ol`), sichtbarer Fokus, Kontrast mindestens
-4,5:1, Bedienung per Tastatur, `prefers-reduced-motion`, Zielgröße mindestens 44 px, `lang="de"`, Cover-`alt` leer (Titel steht daneben).
+4,5:1, Bedienung per Tastatur, `prefers-reduced-motion`, Zielgröße mindestens 44 px bei Berührung (`pointer: coarse`), mit Maus WCAG 2.5.8 (24 px) (Dirigent 12.11.2026, PR 8), `lang="de"`, Cover-`alt` leer (Titel steht daneben).
 Texte deutsch, Feldnamen englisch, Kommentare nur das Warum (1 bis 3 Zeilen).
 
 ## Datenweg

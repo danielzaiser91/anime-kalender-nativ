@@ -127,6 +127,20 @@
   text-decoration: underline;
 }
 
+/* Berührung: echtes Tippziel von 44 px; der negative Rand hält die Zeilenhöhe, die Liste wird nicht länger. */
+@media (pointer: coarse) {
+  .titel a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -12.5px;
+  }
+
+  .titel a::after {
+    display: none;
+  }
+}
+
 .text p {
   margin: 0.125rem 0 0;
   font-size: 0.875rem;
