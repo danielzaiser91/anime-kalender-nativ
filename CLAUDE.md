@@ -132,7 +132,7 @@ Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigen
 ## Oberfläche
 
 Hell und dunkel nur über `prefers-color-scheme`. Echte Elemente (`button`, `a`, `nav`, `ol`), sichtbarer Fokus, Kontrast mindestens
-4,5:1, Bedienung per Tastatur, `prefers-reduced-motion`, Zielgröße mindestens 44 px bei Berührung (`pointer: coarse`), mit Maus WCAG 2.5.8 (24 px) (Dirigent 12.11.2026, PR 8), `lang="de"`, Cover-`alt` leer (Titel steht daneben).
+4,5:1, Bedienung per Tastatur, `prefers-reduced-motion`, Zielgröße mindestens 44 px bei Berührung (`pointer: coarse`), mit Maus WCAG 2.5.8 (24 px) (Daniel 12.11.2026 zu F130: „a - von mir aus … es muss genauso wie live seite sein“; Maßstab ist die Hauptseite), `lang="de"`, Cover-`alt` leer (Titel steht daneben).
 Texte deutsch, Feldnamen englisch, Kommentare nur das Warum (1 bis 3 Zeilen).
 
 ## Datenweg
