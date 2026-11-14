@@ -1,31 +1,42 @@
-/* Farben, Schrift und Maße. Hell ist der Standard, Dunkel folgt dem System (Werte aus der Hauptseite). */
+/* Farben, Schrift und Maße (Namen --ak-* wie die Hauptseite, Werte aus deren styles.css). Hell ist der Standard, Dunkel folgt dem System. */
 :root {
   color-scheme: light dark;
-  --grund: #f5f4f0;
-  --flaeche: #ffffff;
-  --flaeche-2: #ebe9e3;
-  --rand: #d6d3cb;
-  --text: #15171c;
-  --leise: #555b66;
-  --akzent: #f54b27;
-  --akzent-text: #b8321a;
-  --fokus: #1d4ed8;
-  --schrift-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --schrift-titel: 'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif;
+  --ak-grund: #f5f4f0;
+  --ak-flaeche: #ffffff;
+  --ak-flaeche-2: #ebe9e3;
+  --ak-rand: #d6d3cb;
+  --ak-linie: #e2dfd8;
+  --ak-text: #15171c;
+  --ak-leise: #555b66;
+  --ak-sehr-leise: #636974;
+  --ak-akzent: #f54b27;
+  --ak-akzent-text: #b8321a;
+  --ak-tv: #0b7568;
+  --ak-tv-grund: #eaf4f2;
+  --ak-tv-rand: #c7e1dc;
+  --ak-favorit: #f5c542;
+  --ak-fokus: #b8321a;
+  --ak-schrift-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --ak-schrift-titel: 'Sitka Banner', Charter, 'Bitstream Charter', Cambria, 'Noto Serif', serif;
   --abstand: 0.75rem;
   --breite: 52rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --grund: #0d0f14;
-    --flaeche: #151922;
-    --flaeche-2: #1b202a;
-    --rand: #2c3240;
-    --text: #f2f1ee;
-    --leise: #9aa0ab;
-    --akzent: #ff5a36;
-    --akzent-text: #ff7a5c;
-    --fokus: #93b4ff;
+    --ak-grund: #0d0f14;
+    --ak-flaeche: #151922;
+    --ak-flaeche-2: #1b202a;
+    --ak-rand: #2c3240;
+    --ak-linie: #232833;
+    --ak-text: #f2f1ee;
+    --ak-leise: #9aa0ab;
+    --ak-sehr-leise: #828894;
+    --ak-akzent: #ff5a36;
+    --ak-akzent-text: #ff7a5c;
+    --ak-tv: #3cc7b4;
+    --ak-tv-grund: #121821;
+    --ak-tv-rand: #1f2a2f;
+    --ak-fokus: #ff9e85;
   }
 }

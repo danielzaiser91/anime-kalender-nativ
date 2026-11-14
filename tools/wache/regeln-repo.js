@@ -3,7 +3,7 @@ const ABHAENGIGKEITEN = ['dependencies', 'devDependencies', 'optionalDependencie
 const ERLAUBTE_HOSTS = ['anime-kalender.de']
 const TESTDATEI = /(^|\/)(tests?|__tests__|spec)(\/|$)|\.(test|spec)\.[cm]?js$/
 const SPERRDATEIEN = /(^|\/)(package-lock\.json|yarn\.lock|pnpm-lock\.yaml|node_modules)(\/|$)/
-const AUSGELIEFERT = /^(index\.html|css\/|js\/)/
+const AUSGELIEFERT = /^(index\.html|sw\.js|css\/|js\/)/
 
 export function pruefeDateiNamen(pfade) {
   const tests = pfade.filter((p) => TESTDATEI.test(p)).map((p) => `${p}: Testdatei (keine Tests im Repo, Prüfung von außen)`)

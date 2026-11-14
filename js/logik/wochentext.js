@@ -23,6 +23,13 @@ const STAND = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', date
 
 export const standText = (iso) => STAND.format(Date.parse(iso))
 
+const WOCHENTAG_KURZ = format({ weekday: 'short' })
+
+/** "2026-11-12" → "Do" (Großschreibung setzt das Stilblatt). */
+export const tagKurz = (datum) => WOCHENTAG_KURZ.format(ausDatum(datum)).replace('.', '')
+
+export const tagZahl = (datum) => Number(datum.slice(8))
+
 const WOCHENTAG = format({ weekday: 'long' })
 
 export const wochentagName = (datum) => WOCHENTAG.format(ausDatum(datum))

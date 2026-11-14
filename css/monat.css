@@ -19,10 +19,10 @@
   align-items: center;
   min-height: 44px;
   padding: 0 0.75rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.5rem;
-  background: var(--flaeche);
-  color: var(--text);
+  background: var(--ak-flaeche);
+  color: var(--ak-text);
   font: inherit;
   font-weight: 600;
   text-decoration: none;
@@ -30,15 +30,15 @@
 }
 
 .ansicht[aria-current] {
-  background: var(--akzent);
-  border-color: var(--akzent);
+  background: var(--ak-akzent);
+  border-color: var(--ak-akzent);
   color: #15171c;
 }
 
 .schalter[aria-pressed='true'] {
-  background: var(--flaeche-2);
-  border-color: var(--akzent-text);
-  color: var(--akzent-text);
+  background: var(--ak-flaeche-2);
+  border-color: var(--ak-akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 .sprung {
@@ -50,10 +50,10 @@
 .sprung input {
   min-height: 44px;
   padding: 0 0.5rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.5rem;
-  background: var(--flaeche);
-  color: var(--text);
+  background: var(--ak-flaeche);
+  color: var(--ak-text);
   font: inherit;
 }
 
@@ -96,7 +96,7 @@
 .meintrag a {
   position: relative;
   display: inline-block;
-  color: var(--text);
+  color: var(--ak-text);
 }
 
 .meintrag a::after {
@@ -105,20 +105,34 @@
   inset: -0.8rem -0.25rem;
 }
 
+/* Berührung: ein echtes Tippziel von 44 px statt der überlappenden Überlagerung (die Liste wird länger, die Maus-Ansicht bleibt dicht). */
+@media (pointer: coarse) {
+  .meintrag a {
+    display: inline-flex;
+    align-items: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .meintrag a::after {
+    display: none;
+  }
+}
+
 .mzeit {
   margin-right: 0.375rem;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-variant-numeric: tabular-nums;
 }
 
 .mmarke {
   margin-left: 0.25rem;
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 .mtag {
   padding: 0.75rem 0;
-  border-bottom: 1px solid var(--rand);
+  border-bottom: 1px solid var(--ak-rand);
 }
 
 .mtag.fremd,
@@ -128,7 +142,7 @@
 }
 
 .mtag.heute .mdatum {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 @media (min-width: 40rem) {
@@ -139,14 +153,14 @@
   }
 
   .monat-kopf {
-    color: var(--leise);
+    color: var(--ak-leise);
     font-size: 0.875rem;
     text-align: center;
   }
 
   .monat-raster {
-    border-top: 1px solid var(--rand);
-    border-left: 1px solid var(--rand);
+    border-top: 1px solid var(--ak-rand);
+    border-left: 1px solid var(--ak-rand);
   }
 
   .mtag,
@@ -156,16 +170,16 @@
     min-height: 6rem;
     padding: 0.25rem;
     border: 0;
-    border-right: 1px solid var(--rand);
-    border-bottom: 1px solid var(--rand);
+    border-right: 1px solid var(--ak-rand);
+    border-bottom: 1px solid var(--ak-rand);
   }
 
   .mtag.fremd {
-    background: var(--flaeche-2);
+    background: var(--ak-flaeche-2);
   }
 
   .mtag.heute {
-    outline: 2px solid var(--akzent-text);
+    outline: 2px solid var(--ak-akzent-text);
     outline-offset: -2px;
   }
 

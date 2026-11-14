@@ -1,5 +1,6 @@
 // Einstellungen als <dialog> (wird erst beim Öffnen geladen): Ecchi-Titel zeigen, Favoriten als Kalenderdatei.
 import { h } from '../dom.js'
+import { offlineZeile } from './installieren.js'
 import { setzeOption } from '../../logik/merken.js'
 import { aendereMerk } from '../../zustand/merk.js'
 
@@ -31,6 +32,6 @@ export function oeffneEinstellungen(dialog, abhaengigkeiten) {
   const zu = h('button', { type: 'button', class: 'panel-knopf' }, 'Schließen')
   zu.addEventListener('click', () => dialog.close())
   dialog.setAttribute('aria-labelledby', TITEL_ID)
-  dialog.replaceChildren(h('div', { class: 'panel-inhalt' }, h('h2', { id: TITEL_ID }, 'Einstellungen'), ecchiZeile(abhaengigkeiten), exportZeile(abhaengigkeiten), zu))
+  dialog.replaceChildren(h('div', { class: 'panel-inhalt' }, h('h2', { id: TITEL_ID }, 'Einstellungen'), ecchiZeile(abhaengigkeiten), exportZeile(abhaengigkeiten), offlineZeile(abhaengigkeiten), zu))
   if (!dialog.open) dialog.showModal()
 }

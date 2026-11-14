@@ -32,12 +32,6 @@ export function ersetzeVorschlag(gezeigt, entfernt, rang) {
 
 export const artWort = (k) => (k.f === 'MOVIE' ? 'Film' : 'Serie')
 
-/** "Serie · 2023 · 28 Folgen"; Fehlendes entfällt, nichts wird erfunden. */
-export function metaZeile(k) {
-  const folgen = k.f !== 'MOVIE' && k.e ? `${k.e} ${k.e === 1 ? 'Folge' : 'Folgen'}` : undefined
-  return [artWort(k), k.y, folgen].filter((x) => x !== undefined).join(' · ')
-}
-
 /** Nummer des laufenden Duells, Ziel, Zahl der Titel und Restmenge (`null`, wenn sie an der Untergrenze klebt: dann nur eine Grenze, kein Messwert). */
 export function stand(k, z, ziel) {
   const f = fortschritt(k, z, ziel)

@@ -17,10 +17,10 @@
 .suchfeld input {
   min-height: 44px;
   padding: 0 0.5rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.5rem;
-  background: var(--flaeche);
-  color: var(--text);
+  background: var(--ak-flaeche);
+  color: var(--ak-text);
   font: inherit;
   font-weight: 400;
 }
@@ -35,38 +35,40 @@
 .wahl-knopf {
   display: inline-flex;
   align-items: center;
+  min-width: 44px;
   min-height: 44px;
+  justify-content: center;
   padding: 0 0.75rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 1.5rem;
-  background: var(--flaeche);
-  color: var(--text);
+  background: var(--ak-flaeche);
+  color: var(--ak-text);
   font-size: 0.875rem;
   font-weight: 600;
   text-decoration: none;
 }
 
 .wahl-knopf[data-zustand='mit'] {
-  background: var(--flaeche-2);
-  border-color: var(--akzent-text);
-  color: var(--akzent-text);
+  background: var(--ak-flaeche-2);
+  border-color: var(--ak-akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 .wahl-knopf[data-zustand='ohne'] {
   border-style: dashed;
-  color: var(--leise);
+  color: var(--ak-leise);
   text-decoration: line-through;
 }
 
 .wahl-knopf.liste[aria-current] {
-  background: var(--akzent);
-  border-color: var(--akzent);
+  background: var(--ak-akzent);
+  border-color: var(--ak-akzent);
   color: #15171c;
 }
 
 .treffer-zahl {
   margin: var(--abstand) 0 0;
-  color: var(--leise);
+  color: var(--ak-leise);
 }
 
 .treffer-liste {
@@ -81,16 +83,20 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 0.75rem;
-  align-items: baseline;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--rand);
+  align-items: center;
+  padding: 0;
+  border-bottom: 1px solid var(--ak-rand);
 }
 
 .treffer a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
   font-weight: 600;
 }
 
 .treffer-meta {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.875rem;
 }

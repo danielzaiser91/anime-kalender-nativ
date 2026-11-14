@@ -3,10 +3,10 @@
   width: min(100% - 1rem, 42rem);
   max-height: calc(100dvh - 1rem);
   padding: 0;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.75rem;
-  background: var(--flaeche);
-  color: var(--text);
+  background: var(--ak-flaeche);
+  color: var(--ak-text);
   overflow: auto;
   overscroll-behavior: contain;
 }
@@ -38,7 +38,7 @@
   aspect-ratio: 16 / 9;
   max-height: 11rem;
   object-fit: cover;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .panel-kopf {
@@ -52,9 +52,9 @@
   width: 6rem;
   height: auto;
   margin-top: -2.5rem;
-  border: 2px solid var(--flaeche);
+  border: 2px solid var(--ak-flaeche);
   border-radius: 0.5rem;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .panel-name {
@@ -81,10 +81,10 @@
   align-items: center;
   min-height: 44px;
   padding: 0 0.75rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.5rem;
-  background: var(--flaeche-2);
-  color: var(--text);
+  background: var(--ak-flaeche-2);
+  color: var(--ak-text);
   font: inherit;
   font-weight: 600;
   text-decoration: none;
@@ -98,7 +98,7 @@
   justify-content: center;
   min-width: 44px;
   padding: 0;
-  background: var(--flaeche);
+  background: var(--ak-flaeche);
   font-size: 1.5rem;
   line-height: 1;
 }
@@ -108,10 +108,10 @@
   gap: 0.25rem;
   margin: 0 var(--abstand);
   padding: var(--abstand);
-  border: 1px solid var(--rand);
-  border-left: 4px solid var(--akzent);
+  border: 1px solid var(--ak-rand);
+  border-left: 4px solid var(--ak-akzent);
   border-radius: 0.5rem;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .kasten-fertig {
@@ -120,7 +120,7 @@
 
 .kasten-ohne,
 .kasten-teilweise {
-  border-left-color: var(--leise);
+  border-left-color: var(--ak-leise);
 }
 
 .kasten p {
@@ -133,12 +133,12 @@
 
 .kasten-neben,
 .leise {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.875rem;
 }
 
 .kasten-zaehl strong {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 .panel-abschnitt {
@@ -150,12 +150,12 @@
 .panel-abschnitt h3 {
   font-size: 1.0625rem;
   padding-bottom: 0.25rem;
-  border-bottom: 2px solid var(--rand);
+  border-bottom: 2px solid var(--ak-rand);
 }
 
 .panel-abschnitt h4 {
   margin: 0.5rem 0 0.25rem;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.8125rem;
   text-transform: uppercase;
 }
@@ -177,7 +177,7 @@
   align-items: baseline;
   min-height: 44px;
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.5rem;
 }
 
@@ -186,8 +186,10 @@
 }
 
 .weg-name a {
-  display: inline-block;
-  min-height: 24px;
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .weg-folgen,
@@ -196,7 +198,7 @@
 }
 
 .weg-status {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.8125rem;
 }
 
@@ -207,7 +209,7 @@
 
 .weg-hinweis {
   flex-basis: 100%;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.8125rem;
 }
 
@@ -216,7 +218,7 @@
 }
 
 .termin-marke {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
   font-size: 0.8125rem;
 }
 
@@ -228,7 +230,7 @@
 }
 
 .eckdaten dt {
-  color: var(--leise);
+  color: var(--ak-leise);
 }
 
 .eckdaten dd {

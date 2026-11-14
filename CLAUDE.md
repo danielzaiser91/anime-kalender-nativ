@@ -4,6 +4,8 @@ Schlanker Zwilling von [anime-kalender.de](https://anime-kalender.de): dieselben
 nur nativ (HTML, CSS, ES-Module). Läuft parallel zur Hauptseite über GitHub Pages aus einem öffentlichen Repo; kein Cloudflare, keine
 bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil der Größe. Stand: Woche, Monat, Panel (samt Handlung, Besetzung, Folgentiteln, Disc, Reihe, ähnlichen Titeln und Quellen), Favoriten, Gesehen, ICS-Export, Suche und Filter, News, Saison, Kalender-Abo, Was gucken?, Patch Notes.
 
+**Ziel Design: 1:1 wie live (anime-kalender.de)** (Daniel, 12.11.2026). Die native App sieht aus wie die Live-Seite: gleiche Tokens (`--ak-*`, Quelle `web/src/styles.css` der Hauptseite), gleiche Karten, Abstände und Schrift. Jede visuelle Änderung belegt ein Bildpaar (live und nativ, gleiche Breite 390 px, Hell- und Dunkelmodus, Playwright headless); der PR zeigt oder verlinkt die Bilder und nennt jede Abweichung einzeln. Ohne Bildpaar gilt eine visuelle Aussage als unbelegt.
+
 ## Harte Grenzen
 
 1. **Keine Abhängigkeit.** Kein npm-Paket (`package.json` ohne `dependencies`/`devDependencies`, besser ganz ohne), kein CDN, keine
@@ -47,6 +49,7 @@ bezahlten Minuten. Ziel: alles können, was die App kann, bei einem Bruchteil de
 
 ```
 index.html            Hülle mit Lade-Hinweis und noscript
+sw.js                 Service Worker (Wurzelordner, sonst gilt sein Geltungsbereich nur für einen Unterordner; `huelle.json` entsteht beim Bau), manifest.webmanifest, icons/
 css/                  token.css (Farben hell/dunkel per prefers-color-scheme), basis.css, woche.css, panel.css, monat.css, suche.css; seiten.css (News, Saison, Abo, lazy)
 js/main.js            Verdrahtung, höchstens 60 Zeilen
 js/daten/             fetch + Cache; kennt nur Adressen (stand, woche/, titel/<Gruppe>; je Titel handlung/ besetzung/ folgen/ disc/ aehnlich/<Kennung>, je Reihe reihe/<Reihe>); speicher.js (localStorage von außen übergeben)
@@ -58,25 +61,24 @@ js/ui/bausteine/      kleine Teile (Kachel, Leiste, Ansichten-Navigation, Zeitko
 js/ui/seiten/         eine Datei je Ansicht
 js/ui/panel-tor.js    lädt das Panel erst beim Öffnen; js/ui/panel/ ist der <dialog> (Bühne, Antwort-Kasten, Wege, Termine, Eckdaten); darunter je ein eigenes Modul pro Baustein (handlung, folgen, disc, reihe, besetzung, aehnlich, quellen), das bausteine-tor.js erst holt, wenn der Titel es braucht (Merkmal `hat` im Titelbaustein)
 package.json          nur "type": "module" (Node und Browser lesen dieselben Module)
-tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel (außer esbuild in `bauen.sh`, Punkt 1)
+tools/                wache.mjs (Regelwächter), wache-probe.mjs (dessen Selbstprobe), verdichten.mjs (Datenschritt), huelle.mjs (Dateiliste für den Service Worker), bauen.sh (Bau wie im Workflow, minifiziert), je mit Unterordner; nur Node-Bordmittel (außer esbuild in `bauen.sh`, Punkt 1)
 .github/workflows/    daten.yml (Wecker-Dispatch stündlich), pr-pruefer.yml
 ```
 
 ## Stand und bekannte Abweichungen
 
-Wochenansicht (Woche blättern, Titel, Uhrzeit, Anbieter, Folge, Marken) und Panel je Titel (`#/woche/<Woche>/t/<Kennung>`, teilbar):
-Antwort-Kasten, Wege nach Zugang mit Folgenbereichen und Lücken, Termine, Eckdaten. Die Panel-Logik ist aus der Hauptseite portiert und
-gegen deren Funktionen an allen Titeln gemessen. Nicht im Panel: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine,
-Disc-Bände, ausgebliebene Folgen und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert,
-Merken.
+Gebaut sind (Stand Schritt 8): Wochen- und Monatsansicht, Suche und Filter, Favoriten und Gesehen, Panel je Titel mit allen Bausteinen, News, Saison, Kalender-Abo,
+Was gucken?, Patch Notes und Offline/Installation; die Abschnitte je Schritt unten nennen Aufbau und Abweichungen. Gegenüber der Hauptseite fehlen noch:
+Bündeln gleicher Titel, Zweitanbieter-Zeilen, "bestätigt" und "Zweitanbieter" als Filter und im Panel Merken (Favorit und Gesehen sind nur an der Kachel bedienbar).
+Aus dem Panel-Durchstich (Schritt 2) fehlen weiter: Kinofilm ohne deutsche Fassung (Daten fehlen), widerlegte Termine, Disc-Bände, ausgebliebene Folgen
+und "Takt unklar", Teilwege je Staffel (Cartoons), Händler nach Host gruppiert. Die Panel-Logik ist aus der Hauptseite portiert und gegen deren Funktionen an allen Titeln gemessen.
 
 Schritt 3: Monatsansicht (`#/monat/<JJJJ-MM>`, Raster Montag bis Sonntag, schmal eine Liste der Tage mit Terminen; gleiche Termine wie die Woche,
 Panel darüber), Datum-Sprung (`<input type="date">` in der Leiste, springt in der gerade gezeigten Ansicht), Favoriten (je Titel) und
 "Gesehen bis Folge n" (je Folge, Stand je Titel), Einstellungen (nur "Ecchi-Titel zeigen", Vorgabe aus wie auf der Hauptseite; Hell/Dunkel folgt dem System),
 ICS-Export der Favoriten (Termine ab heute, Berliner Zeit als UTC-Stempel plus `X-WR-TIMEZONE` wie die Hauptseite). Speicher (localStorage, Schlüssel wie
 auf der Hauptseite): `favorites` (Liste Kennungen), `gesehenBis` (Kennung → Folge), `ecchiZeigen` ("1"), dazu `nurFavoriten` ("1"). Nachgeladen werden
-`ui/seiten/monat.js`, `ui/einstellungen/` und `ui/ics/`; der Wächter misst jeden `import()`-Einstieg als eigenen Baustein. Gegenüber der Hauptseite fehlt
-noch: Bündeln gleicher Titel, Zweitanbieter-Zeilen, Offline; Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
+`ui/seiten/monat.js`, `ui/einstellungen/` und `ui/ics/`; der Wächter misst jeden `import()`-Einstieg als eigenen Baustein. Favorit und Gesehen sind im Panel nicht bedienbar (nur an der Kachel).
 
 Schritt 4: Suche und Filter (`#/suche?q=…`, Link "Suche" in der Leiste; teilbar, Panel darüber als `#/suche/t/<Kennung>?q=…`). Erst beim Öffnen der Suche
 kommen `data/katalog.json` (je Titel eine Zeile mit Namen, Format, Jahr, FSK, Herkunft, Status und den Listen Genre, Schlagwort, Studio, Plattform, Bezugsquelle, Jahr, Art;
@@ -119,10 +121,24 @@ Favorit, Schon gesehen, Nicht interessiert; Ablage mit Zurückholen; Speicher `e
 "ansehen" führt auf die Hauptseite. Abo-Seite: Links auf Newsletter und Push der Hauptseite. Abweichungen: keine Animationen im Duell, kein Anbieter-Blatt (Vorrang eigener Anbieter), keine Detail-Leinwand mit Trailer (das Panel ersetzt sie), kein Speichern der Reise über Neuladen,
 keine Einleitung mit Cover-Mosaik, kein Ungelesen-Punkt am Patch-Notes-Knopf, Duell-Karten immer im Hochformat-Cover (kein Banner).
 
+Schritt 8: Offline und Installation. `sw.js` (Wurzelordner, klassischer Worker ohne Imports, 0,7 KB gzip, zählt im Wächter zum Gesamt-JS: Gesamt vor der Poster-Woche 79,0 KB, mit ihr 82,4 KB, siehe unten) legt beim Installieren
+die Hülle laut `huelle.json` (vom Bau erzeugt, `tools/huelle.mjs`: HTML, alles unter `css/` und `js/`, Manifest; zusammen ca. 75 KB gzip, einmalig) in den Cache `huelle`.
+Alles Eigene gilt danach als "Netz zuerst, Cache als Rückfall" (Anfrage mit `no-cache`, damit Pages' Zwischenspeicher nichts Altes liefert); bei Netzfehler, Serverfehler
+oder nach 4 s langsamem Netz antwortet der Cache; ein 404 gilt (die Datei ist gewollt weg) und löscht den alten Stand. Daten (`/data/`) liegen im Cache `daten` (höchstens 150 Dateien, die zuletzt geholten bleiben): offline lesbar ist, was zuletzt geladen
+wurde; nie Angesehenes (z. B. Was gucken? ohne vorherigen Besuch) zeigt die ehrliche Fehlermeldung. Cover (fremde Adresse) fasst der Worker nicht an. Ein Hüllenstück, das nur offline aus dem Cache kommt, kann einen
+Stand älter sein als die übrigen; online holt jede Datei die neue Fassung beim ersten Gebrauch. Anmeldung in `ui/offline.js` (nach dem Laden, `import()` aus `main.js`), das Installationsangebot
+(`beforeinstallprompt`) liegt im Store (`installAngebot`, nicht in der Signatur: kein Neuzeichnen); in den Einstellungen `ui/einstellungen/installieren.js`: Hinweis zu Offline,
+Knopf "Als App installieren" (Chromium) oder Hinweis auf das Teilen-Menü (iOS). Manifest `manifest.webmanifest` mit Icons der Hauptseite. Barrierefreiheit-Durchgang: Kontrast 0 Fälle unter 4,5:1 (3:1 große Schrift),
+Fokus überall sichtbar (außer dem Kalender-Knopf im Datumsfeld, Chromium-Eigendarstellung), Tastatur und Escape im Dialog mit Fokus zurück, `prefers-reduced-motion` ohne Bewegung. Tippziele: bei Berührung 44 px (Monat-Einträge und Titel echt, Titel ohne längere Liste), mit Maus kompakt (WCAG 2.5.8, 24 px).
+
+Poster-Woche (12.11.2026, `css/poster.css`, `ui/bausteine/poster.js`, `kaesten.js`, `logik/woche-teile.js`): je Tag Kopf (Zahl, Wochentag, Zählung), zwei Poster je Zeile mit Uhrzeit-Pille ("seit" ab Start heute, Stand beim Laden), Anbieterstreifen und gedämpften vergangenen Terminen, "Im Handel" als Liste und "Im Fernsehen" als Kacheln zum Wischen. Abweichungen von live: Stern auf dem Cover und "Gesehen" unter der Karte (das Panel kennt kein Merken), keine breite Karte für Staffelstart/Finale, keine Fähnchen (Art, Premiere), kein Auge zum Ausblenden von TV/Handel, keine "in n Min"-Pille und keine Jetzt-Linie, kein Bündeln gleicher Titel und keine Zweitanbieter-Zeilen im Raster, kein Mehrspalten-Layout ab 1024 px. Kopf, Navigation und Pillenleiste der Hauptseite fehlen noch (Leiste mit Text-Knöpfen).
+
+Poster-Woche, gemessen am Bau (12.11.2026, Playwright headless, 390 px, Berührung, `tools/bauen.sh`-Wächter): Start 23,3 KB (Ziel 30, hart 50), Gesamt 82,4 KB gegenüber 79,0 KB vor der Poster-Woche (Ziel 42; der Wächter kennt keinen harten Gesamtwert, die frühere Angabe "von 80 KB" war eine Merkgrenze). Der Zuwachs von 3,4 KB gzip ist `poster.css` 1,6, `poster.js` 0,8, `woche-teile.js` 0,8, `kaesten.js` 0,7 und Tokens 0,1 abzüglich der entfallenen `kachel.js` 0,7; gekürzt wurden ungenutzte Regeln (`.zeit`, `.text .marke`), zwei ungenutzte Token und zwei ungenutzte Funktionen (`spaltenVon`, `metaZeile`). Weiteres Kürzen ginge nur auf Kosten von Teilen der 1:1-Vorgabe (Anbieterstreifen, TV-Zeichen, Handel-Kasten) und ist Daniels Entscheidung. Tippziele bei Berührung: Karten ganz (Titellink über der Karte, 337 px hoch), Stern 44 x 44, "Gesehen" 47 x 44, Fernsehkachel und Handelszeile über die ganze Kachel (Trefferprobe: Tipp in die Mitte trifft den Link bei 25 / 25 Karten, 44 / 44 Kacheln, 4 / 4 Zeilen). Kontrast der neuen Karten (WCAG, beide Themen): kleinster Wert 4,92:1 (hell) und 5,01:1 (dunkel), alles über 4,5:1 (`.poster-marke` und `.tag-leer` kamen im Datenstand nicht vor; ihre Farben `--ak-akzent-text` und `--ak-sehr-leise` sind an anderen Stellen mit 5,44:1 bzw. 4,92:1 gemessen).
+
 ## Oberfläche
 
 Hell und dunkel nur über `prefers-color-scheme`. Echte Elemente (`button`, `a`, `nav`, `ol`), sichtbarer Fokus, Kontrast mindestens
-4,5:1, Bedienung per Tastatur, `prefers-reduced-motion`, Zielgröße mindestens 44 px, `lang="de"`, Cover-`alt` leer (Titel steht daneben).
+4,5:1, Bedienung per Tastatur, `prefers-reduced-motion`, Zielgröße mindestens 44 px bei Berührung (`pointer: coarse`), mit Maus WCAG 2.5.8 (24 px) (Daniel 12.11.2026 zu F130: „a - von mir aus … es muss genauso wie live seite sein“; Maßstab ist die Hauptseite), `lang="de"`, Cover-`alt` leer (Titel steht daneben).
 Texte deutsch, Feldnamen englisch, Kommentare nur das Warum (1 bis 3 Zeilen).
 
 ## Datenweg

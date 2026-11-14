@@ -4,25 +4,25 @@
 
 body {
   margin: 0;
-  background: var(--grund);
-  color: var(--text);
-  font: 1rem/1.45 var(--schrift-text);
+  background: var(--ak-grund);
+  color: var(--ak-text);
+  font: 1rem/1.45 var(--ak-schrift-text);
 }
 
 h1,
 h2,
 h3 {
-  font-family: var(--schrift-titel);
+  font-family: var(--ak-schrift-titel);
   margin: 0;
   line-height: 1.2;
 }
 
 a {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 :focus-visible {
-  outline: 3px solid var(--fokus);
+  outline: 3px solid var(--ak-fokus);
   outline-offset: 2px;
 }
 
@@ -52,27 +52,27 @@ main:focus {
 }
 
 .marke-name {
-  font: 700 1.25rem var(--schrift-titel);
+  font: 700 1.25rem var(--ak-schrift-titel);
 }
 
 .marke-name a {
-  color: var(--text);
+  color: var(--ak-text);
   text-decoration: none;
 }
 
 .marke-name span {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
 }
 
 .kopf-text,
 .fuss {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.875rem;
 }
 
 .meldung {
   padding: 2rem 0;
-  color: var(--leise);
+  color: var(--ak-leise);
 }
 
 @media (prefers-reduced-motion: reduce) {

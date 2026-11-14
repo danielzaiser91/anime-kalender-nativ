@@ -107,8 +107,6 @@ export function startOffen(liste, art) {
   return !gross || art === 'gesamt' || art === 'box'
 }
 
-export const spaltenVon = (liste) => FORMATE.filter((f) => liste.some((v) => v.formate.includes(f)))
-
 export function jahre(liste) {
   const alle = liste.map(spaetestes).filter(Boolean).map((d) => d.slice(0, 4)).sort()
   if (!alle.length) return ''

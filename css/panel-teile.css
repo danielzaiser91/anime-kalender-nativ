@@ -13,7 +13,7 @@
   min-height: 44px;
   font-weight: 700;
   cursor: pointer;
-  border-bottom: 2px solid var(--rand);
+  border-bottom: 2px solid var(--ak-rand);
 }
 
 .aufklapp-inhalt {
@@ -33,7 +33,7 @@
 
 .handlung-hinweis {
   margin: 0;
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
   font-size: 0.875rem;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .handlung-quelle {
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.875rem;
 }
 
@@ -55,7 +55,9 @@
 .quellen a {
   display: inline-flex;
   align-items: center;
+  min-width: 44px;
   min-height: 44px;
+  justify-content: center;
 }
 
 .besetzung {
@@ -66,7 +68,7 @@
 }
 
 .besetzung dt {
-  color: var(--leise);
+  color: var(--ak-leise);
 }
 
 .besetzung dt,
@@ -90,8 +92,8 @@
 }
 
 .folgen-paket[aria-pressed='true'] {
-  border-color: var(--akzent);
-  background: var(--flaeche);
+  border-color: var(--ak-akzent);
+  background: var(--ak-flaeche);
 }
 
 .folgen-liste,
@@ -118,7 +120,7 @@
 .folge-nr {
   flex: none;
   width: 2.25rem;
-  color: var(--leise);
+  color: var(--ak-leise);
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -133,7 +135,7 @@
 
 .folge-min {
   flex: none;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-variant-numeric: tabular-nums;
 }
 
@@ -141,9 +143,9 @@
 .reihe-marke {
   flex: none;
   padding: 0 0.375rem;
-  border: 1px solid var(--rand);
+  border: 1px solid var(--ak-rand);
   border-radius: 0.25rem;
-  color: var(--leise);
+  color: var(--ak-leise);
   font-size: 0.75rem;
   font-weight: 700;
 }
@@ -171,7 +173,7 @@
   display: grid;
   gap: 0.125rem 0.75rem;
   padding: 0.5rem 0;
-  border-top: 1px solid var(--rand);
+  border-top: 1px solid var(--ak-rand);
 }
 
 .disc-name {
@@ -190,7 +192,7 @@
 }
 
 .disc-datum.kommend {
-  color: var(--akzent-text);
+  color: var(--ak-akzent-text);
   font-weight: 700;
 }
 
@@ -212,12 +214,12 @@
 }
 
 .reihe-teil > a:hover {
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .reihe-teil.aktuell {
-  border-left: 4px solid var(--akzent);
-  background: var(--flaeche-2);
+  border-left: 4px solid var(--ak-akzent);
+  background: var(--ak-flaeche-2);
 }
 
 .reihe-cover {
@@ -226,7 +228,7 @@
   height: 54px;
   border-radius: 0.25rem;
   object-fit: cover;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .reihe-text {
@@ -248,7 +250,7 @@
   display: flex;
   align-items: center;
   min-height: 44px;
-  color: var(--leise);
+  color: var(--ak-leise);
   cursor: pointer;
 }
 
@@ -269,7 +271,7 @@
 }
 
 .aehnlich-kachel:hover {
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .aehnlich-cover {
@@ -279,7 +281,7 @@
   height: 132px;
   border-radius: 0.375rem;
   object-fit: cover;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
 }
 
 .aehnlich-text {
@@ -308,12 +310,12 @@
 .merkmal {
   padding: 0 0.375rem;
   border-radius: 0.25rem;
-  background: var(--flaeche-2);
+  background: var(--ak-flaeche-2);
   font-size: 0.75rem;
 }
 
 .merkmal.genre {
-  border: 1px solid var(--akzent);
+  border: 1px solid var(--ak-akzent);
   font-weight: 700;
 }
 
@@ -326,7 +328,7 @@
 .quellen th,
 .quellen td {
   padding: 0.25rem 0.5rem 0.25rem 0;
-  border-top: 1px solid var(--rand);
+  border-top: 1px solid var(--ak-rand);
   text-align: left;
   vertical-align: top;
 }
